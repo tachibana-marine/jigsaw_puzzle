@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3 uid="uid://dy011sunavm16"]
+
+[ext_resource type="Script" path="res://src/game.gd" id="1_bkqww"]
+[ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="1_u7ugc"]
+[ext_resource type="Texture2D" uid="uid://donen7nykcgff" path="res://asset/pancake.png" id="2_u61km"]
+
+[node name="Node2D" type="Node2D"]
+position = Vector2(-45, 0)
+script = ExtResource("1_bkqww")
+
+[node name="JigsawPuzzle" type="Node2D" parent="."]
+position = Vector2(505, 330)
+script = ExtResource("1_u7ugc")
+texture = ExtResource("2_u61km")
