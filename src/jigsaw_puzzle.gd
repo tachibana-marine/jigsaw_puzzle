@@ -18,12 +18,12 @@ func _add_pieces(size: Vector2):
     for y in range(2):
         for x in range(2):
             var piece = Sprite2D.new()
+            piece.vframes = 2
+            piece.hframes = 2
+            piece.frame_coords = Vector2(x, y)
             piece.centered = false
             piece.texture = texture
-            piece.region_enabled = true
             piece.position = Vector2(x * step_x, y * step_y)
-            #piece.size = Vector2(step_x, step_y)
-            piece.region_rect = Rect2(x * step_x, y * step_y, (x + 1) * (step_x) - 1, (y + 1) * (step_y) - 1)
             $PieceHolder.add_child(piece)
 func get_pieces():
     return $PieceHolder.get_children()

@@ -22,19 +22,12 @@ func test_get_4_pieces_sorted_row_first():
 
     var pieces = jigsaw_puzzle.get_pieces()
     assert_eq(pieces.size(), 4)
-    assert_eq(pieces[0].region_rect, Rect2(0, 0, 4, 4))
-    assert_eq(pieces[0].frame_coords, Vector2(0, 0))
-    assert_eq(pieces[0].position, Vector2(0, 0))
-    assert_eq(pieces[0].size, Vector2(5, 5))
-
-    assert_eq(pieces[1].region_rect, Rect2(5, 0, 9, 4))
-    assert_eq(pieces[1].position, Vector2(5, 0))
-    assert_eq(pieces[1].size, Vector2(5, 5))
-    
-    assert_eq(pieces[2].region_rect, Rect2(0, 5, 4, 9))
-    assert_eq(pieces[2].position, Vector2(0, 5))
-    assert_eq(pieces[2].size, Vector2(5, 5))
-
-    assert_eq(pieces[3].region_rect, Rect2(5, 5, 9, 9))
-    assert_eq(pieces[3].position, Vector2(5, 5))
-    assert_eq(pieces[3].size, Vector2(5, 5))
+    var i = 0
+    for y in range(2):
+        for x in range(2):
+            print(i)
+            assert_eq(pieces[i].vframes, 2)
+            assert_eq(pieces[i].hframes, 2)
+            assert_eq(pieces[i].frame_coords, Vector2i(x, y))
+            assert_eq(pieces[i].position, Vector2(x * 5, y * 5))
+            i += 1
