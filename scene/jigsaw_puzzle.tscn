@@ -1,14 +1,29 @@
-[gd_scene load_steps=4 format=3 uid="uid://dy011sunavm16"]
+[gd_scene load_steps=6 format=3 uid="uid://dy011sunavm16"]
 
 [ext_resource type="Script" path="res://src/game.gd" id="1_bkqww"]
-[ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="1_u7ugc"]
-[ext_resource type="Texture2D" uid="uid://donen7nykcgff" path="res://asset/pancake.png" id="2_u61km"]
+[ext_resource type="Script" path="res://src/piece.gd" id="2_dhc1j"]
+[ext_resource type="Texture2D" uid="uid://donen7nykcgff" path="res://asset/pancake.png" id="3_ertd7"]
+[ext_resource type="Script" path="res://src/piece_shape.gd" id="4_2xtk1"]
+[ext_resource type="Texture2D" uid="uid://6c5yuj7v4wvp" path="res://icon.svg" id="5_nmnnm"]
 
 [node name="Node2D" type="Node2D"]
 position = Vector2(-45, 0)
 script = ExtResource("1_bkqww")
 
-[node name="JigsawPuzzle" type="Node2D" parent="."]
-position = Vector2(505, 330)
-script = ExtResource("1_u7ugc")
-texture = ExtResource("2_u61km")
+[node name="Piece" type="Node2D" parent="."]
+position = Vector2(181, 65)
+script = ExtResource("2_dhc1j")
+texture = ExtResource("3_ertd7")
+region_rect = Rect2(0, 0, 100, 100)
+frame_coords = Vector2i(1, 2)
+
+[node name="PieceShape" type="Node2D" parent="."]
+visible = false
+position = Vector2(88, 129)
+script = ExtResource("4_2xtk1")
+size = Vector2(100, 100)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("5_nmnnm")
+offset = Vector2(10, 10)

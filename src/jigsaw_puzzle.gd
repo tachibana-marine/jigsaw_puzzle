@@ -9,12 +9,12 @@ class_name JigsawPuzzle
     set(value):
         texture = value
         $Sprite.texture = value
-        _add_pieces(texture.get_size())
+        _create_pieces(texture.get_size())
+        randomize_pieces()
 
-func _add_pieces(size: Vector2):
+func _create_pieces(size: Vector2):
     var step_x = (int)(size.x / 2)
     var step_y = (int)(size.y / 2)
-    print(size, step_x, step_y)
     for y in range(2):
         for x in range(2):
             var piece = Sprite2D.new()
@@ -25,9 +25,20 @@ func _add_pieces(size: Vector2):
             piece.texture = texture
             piece.position = Vector2(x * step_x, y * step_y)
             $PieceHolder.add_child(piece)
+
 func get_pieces():
     return $PieceHolder.get_children()
 
+func randomize_pieces():
+    var x = range(2)
+    var y = range(2)
+    x.shuffle()
+    y.shuffle()
+    var index = 0
+    for j in range(2):
+        for i in range(2):
+            get_pieces()[index].frame_coords = Vector2i(x[i], y[j])
+            index += 1
 
 func _init():
     var sprite = Sprite2D.new()
