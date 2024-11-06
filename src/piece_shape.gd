@@ -6,19 +6,32 @@ extends Node2D
     get: return size
     set(value):
         size = value
-        queue_redraw()
+        _update_polygon()
 
 @export var dimple: Vector4i = Vector4i(0, 0, 0, 0):
     get: return dimple
     set(value):
         dimple = value
-        queue_redraw()
+        _update_polygon()
 
 @export var dimple_shape: PackedVector2Array = []:
     get: return dimple_shape
     set(value):
         dimple_shape = value
+        _update_polygon()
 
+func _get_dimple_shape(x, y) -> PackedVector2Array:
+    var shape = dimple_shape
+    for vertex in shape:
+        vertex += Vector2(x, y)
+    return shape
+
+func _update_polygon():
+    # vertices = [Vector2(0, 0)]
+    # if (dimple.x > 0):
+    #     vertices.append(Vector2(dimple.x, 0))
+    #     vertices += (_get_dimple_shape(dimple.x, 0))
+    queue_redraw()
 
 var vertices: PackedVector2Array = [Vector2(0, 0), Vector2(10, 0), Vector2(10, -20), Vector2(40, -20), Vector2(40, 0), Vector2(100, 0),
     Vector2(100, 20), Vector2(80, 20), Vector2(80, 50), Vector2(100, 50), Vector2(100, 100),
@@ -32,11 +45,3 @@ var draw_log: String = "":
 func _draw() -> void:
     draw_log = ""
     draw_polygon(vertices, [Color.WHITE])
-    # draw_rect(Rect2(0, 0, size.x, size.y), Color.WHITE)
-    # draw_log += "base " + str(size.x) + "," + str(size.y) + "\n"
-    # var dimple_radius = 15
-    # var dimple_height = 35
-    # draw_rect(Rect2(30 - dimple_radius, -dimple_height, 2 * dimple_radius, dimple_height), Color.WHITE)
-    # draw_log += "dimple 30,0\n"
-    # draw_rect(Rect2(30 - dimple_radius, 100 - dimple_height, 2 * dimple_radius, dimple_height), Color.BLACK)
-    # draw_log += "dimple 30,0\n"
