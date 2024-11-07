@@ -20,23 +20,50 @@ extends Node2D
         dimple_shape = value
         _update_polygon()
 
-func _get_dimple_shape(x, y) -> PackedVector2Array:
-    var shape = dimple_shape
-    for vertex in shape:
-        vertex += Vector2(x, y)
+func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
+    var shape = []
+    var logger = []
+    for vertex in dimple_shape:
+        var tmp = vertex
+        if is_cavity:
+            tmp.y *= -1
+        # round the result to the 4th digit
+        tmp = (tmp.rotated(angle) * 1000).round() / 1000
+        shape.append(tmp + Vector2(x, y))
+        logger.append(tmp.rotated(angle))
+    print(logger, "logger")
     return shape
 
 func _update_polygon():
-    # vertices = [Vector2(0, 0)]
-    # if (dimple.x > 0):
-    #     vertices.append(Vector2(dimple.x, 0))
-    #     vertices += (_get_dimple_shape(dimple.x, 0))
+    var coords = ["x", "y", "z", "w"]
+    var is_cavity = []
+    var positions = []
+    for coord in coords:
+       var d = dimple[coord]
+       positions.append(abs(d))
+       if (d > 0):
+           is_cavity.append(false)
+       elif (d < 0):
+           is_cavity.append(true)
+       else:
+           is_cavity.append(null)
+
+    vertices = [Vector2(0, 0)]
+    if (is_cavity[0] != null):
+        vertices += (_get_dimple_shape(positions[0], 0, 0, is_cavity[0]))
+    vertices.append(Vector2(100, 0))
+    if (is_cavity[1] != null):
+        vertices += (_get_dimple_shape(100, positions[1], 0.5 * PI, is_cavity[1]))
+    vertices.append(Vector2(100, 100))
+    if (is_cavity[2] != null):
+        vertices += (_get_dimple_shape(100 - positions[2], 100, PI, is_cavity[2]))
+    vertices.append(Vector2(0, 100))
+    if (is_cavity[3] != null):
+        vertices += (_get_dimple_shape(0, 100 - positions[3], 1.5 * PI, is_cavity[3]))
+    print(vertices)
     queue_redraw()
 
-var vertices: PackedVector2Array = [Vector2(0, 0), Vector2(10, 0), Vector2(10, -20), Vector2(40, -20), Vector2(40, 0), Vector2(100, 0),
-    Vector2(100, 20), Vector2(80, 20), Vector2(80, 50), Vector2(100, 50), Vector2(100, 100),
-    Vector2(70, 100), Vector2(70, 120), Vector2(40, 120), Vector2(40, 100), Vector2(0, 100),
-    Vector2(0, 70), Vector2(20, 70), Vector2(20, 40), Vector2(0, 40)]
+var vertices: PackedVector2Array = []
 
 var draw_log: String = "":
     get: return draw_log
