@@ -17,7 +17,7 @@ extends Node2D
 @export var dimple_shape: PackedVector2Array = []:
     get: return dimple_shape
     set(value):
-        dimple_shape = value
+        dimple_shape = _reshape_dimple_shape_to_start_from_bottom_left(value)
         _update_polygon()
 
 func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
@@ -31,9 +31,27 @@ func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
         tmp = (tmp.rotated(angle) * 1000).round() / 1000
         shape.append(tmp + Vector2(x, y))
         logger.append(tmp.rotated(angle))
-    print(logger, "logger")
+    # print(logger, "logger")
     return shape
 
+func _reshape_dimple_shape_to_start_from_bottom_left(input: PackedVector2Array):
+    if input.is_empty():
+        return input
+    var array: Array[Vector2] = []
+    var bottom_left = Vector2(INF, -INF)
+    var index = 0
+    var i = 0
+    for vertex in input:
+        if vertex.x < bottom_left.x && vertex.y > bottom_left.y:
+            print(bottom_left, i)
+            bottom_left = vertex
+            index = i
+        array.append(vertex)
+        i += 1
+    print("reshaped as follows:")
+    print(array.slice(index, -1) + [array[-1]] + array.slice(0, index))
+    return PackedVector2Array(array.slice(index, -1) + [array[-1]] + array.slice(0, index))
+    
 func _update_polygon():
     var coords = ["x", "y", "z", "w"]
     var is_cavity = []
@@ -68,7 +86,9 @@ var vertices: PackedVector2Array = []
 var draw_log: String = "":
     get: return draw_log
 
-    
+func _ready():
+    if dimple_shape.is_empty():
+        dimple_shape = PackedVector2Array([Vector2(14, 4), Vector2(9, 4), Vector2(4, 10), Vector2(3, 10), Vector2(3, 17), Vector2(10, 25), Vector2(11, 25), Vector2(12, 30), Vector2(13, 30), Vector2(10, 37), Vector2(10, 40), Vector2(27, 40), Vector2(26, 36), Vector2(26, 28), Vector2(29, 20), Vector2(30, 20), Vector2(26, 9), Vector2(26, 7), Vector2(14, 3)])
 func _draw() -> void:
     draw_log = ""
     draw_polygon(vertices, [Color.WHITE])

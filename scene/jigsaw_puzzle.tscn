@@ -11,6 +11,7 @@ position = Vector2(-45, 0)
 script = ExtResource("1_bkqww")
 
 [node name="Piece" type="Node2D" parent="."]
+visible = false
 position = Vector2(181, 65)
 script = ExtResource("2_dhc1j")
 texture = ExtResource("3_ertd7")
@@ -21,8 +22,15 @@ frame_coords = Vector2i(1, 2)
 position = Vector2(88, 129)
 script = ExtResource("4_2xtk1")
 size = Vector2(100, 100)
-dimple = Vector4i(10, -20, 30, -30)
-dimple_shape = PackedVector2Array(0, 0, 0, 20, 30, 20, 20, 0)
+dimple = Vector4i(10, -20, 30, -39)
+dimple_shape = PackedVector2Array(0, 0, 0, -20, 30, -20, 30, 0)
+
+[node name="PieceShape2" type="Node2D" parent="."]
+position = Vector2(348, 131)
+script = ExtResource("4_2xtk1")
+size = Vector2(100, 100)
+dimple = Vector4i(10, -20, 30, -39)
+dimple_shape = PackedVector2Array()
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false
