@@ -18,6 +18,9 @@ extends Node2D
     get: return dimple_image
     set(value):
         dimple_image = value
+        if value == null:
+            dimple_shape = PackedVector2Array([])
+            return
         var bitmap = BitMap.new()
         bitmap.create_from_image_alpha(value.get_image())
         dimple_shape = bitmap.opaque_to_polygons(Rect2(0, 0, 40, 40))[0]
@@ -51,7 +54,7 @@ func _reshape_dimple_shape_to_start_from_bottom_left(input: PackedVector2Array):
     var index = 0
     var i = 0
     for vertex in input:
-        if vertex.x > bottom_right.x && vertex.y > bottom_right.y:
+        if vertex.x >= bottom_right.x && vertex.y >= bottom_right.y:
             bottom_right = vertex
             index = i
         array.append(vertex)

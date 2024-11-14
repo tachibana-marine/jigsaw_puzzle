@@ -46,6 +46,7 @@ PieceShape
     - [ ] dimple_shapeは半時計回り
   - [x] 画像でdimpleの形を決められる
     - [x] dimple_image
+    - [x] 解除時にはdimple_shapeがなくなる
 - [x] 指定した箇所に出っ張り・くぼみがある
   - [x] 上下左右各箇所
   - [x] dimple
