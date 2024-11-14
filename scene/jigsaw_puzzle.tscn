@@ -29,8 +29,8 @@ dimple_shape = PackedVector2Array(0, 0, 0, -20, -30, -20, -30, 0)
 position = Vector2(348, 131)
 script = ExtResource("4_2xtk1")
 size = Vector2(100, 100)
-dimple = Vector4i(10, -20, 30, -30)
-dimple_shape = PackedVector2Array(0, 0, -4, -11, -4, -13, -16, -17, -16, -16, -21, -16, -26, -10, -27, -10, -27, -3, -20, 5, -19, 5, -18, 10, -17, 10, -20, 17, -20, 20, -3, 20, -4, 16, -4, 8, -1, 0)
+dimple = Vector4i(10, -20, 30, -39)
+dimple_shape = PackedVector2Array()
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 visible = false

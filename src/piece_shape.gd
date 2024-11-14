@@ -51,7 +51,7 @@ func _reshape_dimple_shape_to_start_from_bottom_left(input: PackedVector2Array):
     var index = 0
     var i = 0
     for vertex in input:
-        if vertex > bottom_right:
+        if vertex.x > bottom_right.x && vertex.y > bottom_right.y:
             bottom_right = vertex
             index = i
         array.append(vertex)
