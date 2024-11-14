@@ -29,9 +29,11 @@ func test_shape_changes_based_on_size():
     piece_shape.size = Vector2(200, 150)
     assert_eq(piece_shape.vertices, PackedVector2Array([Vector2(200, 0), Vector2(0, 0), Vector2(0, 150), Vector2(200, 150)]))
 
-func test_has_dimple_image_property():
+func test_setting_dimple_image_changes_dimple_shape():
     var img = Image.create_empty(30, 20, false, Image.FORMAT_RGB8)
-    assert_property(piece_shape, "dimple_image", null, img)
+    var img_texture = ImageTexture.create_from_image(img)
+    assert_property(piece_shape, "dimple_image", null, img_texture)
+    assert_eq(piece_shape.dimple_shape, PackedVector2Array([Vector2(0, 0), Vector2(0, -20), Vector2(-30, -20), Vector2(-30, 0)]))
 
 func test_dimple_accuracy_to_the_4th_digit():
     piece_shape.size = Vector2(100, 100)

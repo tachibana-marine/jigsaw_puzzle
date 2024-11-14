@@ -44,8 +44,8 @@ PieceShape
     - 理論上は別の形も可能
     - [x] dimple_shapeが右下から始まっていない場合、右下からにする
     - [ ] dimple_shapeは半時計回り
-  - [ ] 画像でdimpleの形を決められる
-    - [ ] dimple_image
+  - [x] 画像でdimpleの形を決められる
+    - [x] dimple_image
 - [x] 指定した箇所に出っ張り・くぼみがある
   - [x] 上下左右各箇所
   - [x] dimple

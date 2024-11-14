@@ -14,10 +14,19 @@ extends Node2D
         dimple = value
         _update_polygon()
 
+@export var dimple_image: Texture2D = null:
+    get: return dimple_image
+    set(value):
+        dimple_image = value
+        var bitmap = BitMap.new()
+        bitmap.create_from_image_alpha(value.get_image())
+        dimple_shape = bitmap.opaque_to_polygons(Rect2(0, 0, 40, 40))[0]
+
 @export var dimple_shape: PackedVector2Array = []:
     get: return dimple_shape
     set(value):
         dimple_shape = _reshape_dimple_shape_to_start_from_bottom_left(value)
+        print("reshaped:", dimple_shape)
         _update_polygon()
 
 func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
@@ -42,12 +51,11 @@ func _reshape_dimple_shape_to_start_from_bottom_left(input: PackedVector2Array):
     var index = 0
     var i = 0
     for vertex in input:
-        if vertex.x > bottom_right.x && vertex.y > bottom_right.y:
+        if vertex > bottom_right:
             bottom_right = vertex
             index = i
         array.append(vertex)
         i += 1
-    print("bottom_right, ", bottom_right)
     for j in range(array.size()):
         array[j] -= bottom_right
         
@@ -78,8 +86,8 @@ func _update_polygon():
     vertices.append(Vector2(size.x, size.y))
     if (is_cavity[3] != null):
         vertices += (_get_dimple_shape(size.x, size.y - positions[3], 0.5 * PI, is_cavity[3]))
-    print(vertices)
     queue_redraw()
+    print(vertices)
 
 var vertices: PackedVector2Array = []
 
@@ -88,7 +96,7 @@ var draw_log: String = "":
 
 func _ready():
     if dimple_shape.is_empty():
-        dimple_shape = PackedVector2Array([Vector2(14, 4), Vector2(9, 4), Vector2(4, 10), Vector2(3, 10), Vector2(3, 17), Vector2(10, 25), Vector2(11, 25), Vector2(12, 30), Vector2(13, 30), Vector2(10, 37), Vector2(10, 40), Vector2(27, 40), Vector2(26, 36), Vector2(26, 28), Vector2(29, 20), Vector2(30, 20), Vector2(26, 9), Vector2(26, 7), Vector2(14, 3)])
+        # dimple_shape = PackedVector2Array([Vector2(14, 4), Vector2(9, 4), Vector2(4, 10), Vector2(3, 10), Vector2(3, 17), Vector2(10, 25), Vector2(11, 25), Vector2(12, 30), Vector2(13, 30), Vector2(10, 37), Vector2(10, 40), Vector2(27, 40), Vector2(26, 36), Vector2(26, 28), Vector2(29, 20), Vector2(30, 20), Vector2(26, 9), Vector2(26, 7), Vector2(14, 3)])
         pass
 func _draw() -> void:
     draw_log = ""
