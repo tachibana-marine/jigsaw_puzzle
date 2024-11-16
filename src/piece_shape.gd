@@ -3,10 +3,16 @@ class_name PieceShape
 extends Node2D
 
 @export var size: Vector2 = Vector2.ZERO:
-    get: return size
-    set(value):
-        size = value
-        _update_polygon()
+    get = get_size,
+    set = set_size
+    
+# these functions must be declared so that child classes can override the setter
+func get_size():
+    return size
+func set_size(value):
+    size = value
+    _update_polygon()
+
 
 @export var dimple: Vector4i = Vector4i(0, 0, 0, 0):
     get: return dimple

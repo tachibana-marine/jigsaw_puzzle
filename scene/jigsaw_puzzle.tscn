@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dy011sunavm16"]
+[gd_scene load_steps=7 format=3 uid="uid://dkshcgquqqbp1"]
 
 [ext_resource type="Script" path="res://src/game.gd" id="1_bkqww"]
 [ext_resource type="Script" path="res://src/piece.gd" id="2_dhc1j"]
@@ -12,12 +12,16 @@ position = Vector2(-45, 0)
 script = ExtResource("1_bkqww")
 
 [node name="Piece" type="Node2D" parent="."]
-visible = false
-position = Vector2(181, 65)
+clip_children = 1
+position = Vector2(600, 65)
 script = ExtResource("2_dhc1j")
 texture = ExtResource("3_ertd7")
 region_rect = Rect2(0, 0, 100, 100)
-frame_coords = Vector2i(1, 2)
+frame_coords = Vector2i(3, 2)
+size = Vector2(100, 100)
+dimple = Vector4i(40, -30, 20, -30)
+dimple_image = ExtResource("5_w0s4q")
+dimple_shape = PackedVector2Array(0, 0, -1, -4, -1, -12, 2, -20, 3, -20, -1, -31, -1, -33, -13, -37, -13, -36, -18, -36, -23, -30, -24, -30, -24, -23, -17, -15, -16, -15, -15, -10, -14, -10, -17, -3, -17, 0)
 
 [node name="PieceShape" type="Node2D" parent="."]
 position = Vector2(88, 129)

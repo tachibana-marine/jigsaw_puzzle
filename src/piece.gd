@@ -1,40 +1,45 @@
 @tool
-extends Node2D
+extends PieceShape
 class_name Piece
+
+func set_size(value):
+    super.set_size(value)
+    $Background.size = value * 2
+    $Background.position = -size / 2
 
 @export var texture: Texture2D = null:
     get: return texture
     set(value):
         texture = value
-        $PieceShape/Sprite.texture = value
+        $Sprite.texture = value
+        $Background.size = texture.get_size()
 
 @export var region_rect: Rect2 = Rect2(0, 0, 0, 0):
     get: return region_rect
     set(value):
         region_rect = value
-        $PieceShape.size = value.size
 
 @export var frame_coords: Vector2i = Vector2i(0, 0):
     get: return frame_coords
     set(value):
         frame_coords = value
-        var size = $PieceShape.size
-        $PieceShape/Sprite.offset = Vector2(-value.x * size.x, -value.y * size.y)
+        $Sprite.offset = Vector2(-value.x * size.x, -value.y * size.y)
 
-var dimensions: Vector2i = Vector2i(1, 1):
+@export var dimensions: Vector2i = Vector2i(1, 1):
     get: return dimensions
     set(value):
         dimensions = value
         if texture:
-            $PieceShape.size = texture.get_size() / (value.x * value.y)
+            size = texture.get_size() / (value.x * value.y)
 
 func _init():
-    var piece_shape = PieceShape.new()
-    piece_shape.name = "PieceShape"
-    piece_shape.clip_children = CanvasItem.ClipChildrenMode.CLIP_CHILDREN_ONLY
-    add_child(piece_shape)
+    self.clip_children = CanvasItem.ClipChildrenMode.CLIP_CHILDREN_ONLY
+    var background = Rectangle.new()
+    background.color = Color.RED
+    background.name = "Background"
+    add_child(background)
 
     var sprite = Sprite2D.new()
     sprite.centered = false
     sprite.name = "Sprite"
-    piece_shape.add_child(sprite)
+    add_child(sprite)
