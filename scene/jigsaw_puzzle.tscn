@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkshcgquqqbp1"]
+[gd_scene load_steps=8 format=3 uid="uid://dkshcgquqqbp1"]
 
 [ext_resource type="Script" path="res://src/game.gd" id="1_bkqww"]
 [ext_resource type="Script" path="res://src/piece.gd" id="2_dhc1j"]
@@ -6,23 +6,26 @@
 [ext_resource type="Script" path="res://src/piece_shape.gd" id="4_2xtk1"]
 [ext_resource type="Texture2D" uid="uid://6c5yuj7v4wvp" path="res://icon.svg" id="5_nmnnm"]
 [ext_resource type="Texture2D" uid="uid://n2hsgcg2w51v" path="res://asset/piece_dimple.png" id="5_w0s4q"]
+[ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="7_3u0b6"]
 
 [node name="Node2D" type="Node2D"]
 position = Vector2(-45, 0)
 script = ExtResource("1_bkqww")
 
 [node name="Piece" type="Node2D" parent="."]
+visible = false
 clip_children = 1
 position = Vector2(600, 65)
 script = ExtResource("2_dhc1j")
 texture = ExtResource("3_ertd7")
-image_offset = Vector2(-55, -142)
+image_offset = Vector2(-55, -143)
 size = Vector2(100, 100)
 dimple = Vector4i(40, -30, 20, -30)
 dimple_image = ExtResource("5_w0s4q")
 dimple_shape = PackedVector2Array(0, 0, -1, -4, -1, -12, 2, -20, 3, -20, -1, -31, -1, -33, -13, -37, -13, -36, -18, -36, -23, -30, -24, -30, -24, -23, -17, -15, -16, -15, -15, -10, -14, -10, -17, -3, -17, 0)
 
 [node name="PieceShape" type="Node2D" parent="."]
+visible = false
 position = Vector2(88, 129)
 script = ExtResource("4_2xtk1")
 size = Vector2(100, 100)
@@ -30,6 +33,7 @@ dimple = Vector4i(10, -20, 30, -39)
 dimple_shape = PackedVector2Array(0, 0, 0, -20, -30, -20, -30, 0)
 
 [node name="PieceShape2" type="Node2D" parent="."]
+visible = false
 position = Vector2(348, 131)
 script = ExtResource("4_2xtk1")
 size = Vector2(100, 100)
@@ -41,3 +45,9 @@ dimple_shape = PackedVector2Array(0, 0, -1, -4, -1, -12, 2, -20, 3, -20, -1, -31
 visible = false
 texture = ExtResource("5_nmnnm")
 offset = Vector2(10, 10)
+
+[node name="JigsawPuzzle" type="Node2D" parent="."]
+position = Vector2(84, 18)
+script = ExtResource("7_3u0b6")
+texture = ExtResource("3_ertd7")
+split_dimension = Vector2i(4, 6)
