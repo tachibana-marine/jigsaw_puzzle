@@ -22,8 +22,13 @@ func test_piece_properties():
     assert_eq(background.size, Vector2(20, 20))
     assert_eq(background.position, Vector2(-5, -5))
     assert_property(piece, "texture", null, image_texture)
+    assert_property(piece, "image_offset", Vector2.ZERO, Vector2(-3, -5))
     assert_eq(sprite.texture, image_texture)
-    assert_property(piece, "dimensions", Vector2i(1, 1), Vector2i(10, 10))
-    assert_property(piece, "frame_coords", Vector2i(0, 0), Vector2i(1, 1))
-    assert_eq(sprite.offset, Vector2(-10, -10))
-    assert_property(piece, "region_rect", Rect2(0, 0, 0, 0), Rect2(0, 0, 100, 100))
+    assert_eq(sprite.offset, Vector2(-3, -5))
+
+# use this if you add null check to texture
+# func test_change_image_texture_to_null():
+#     var image_texture = create_empty_image_texture(1000, 1000)
+#     piece.texture = image_texture
+#     piece.texture = null
+#     assert_null(piece.texture)
