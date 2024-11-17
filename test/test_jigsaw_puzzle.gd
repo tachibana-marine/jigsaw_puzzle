@@ -12,17 +12,42 @@ func before_each():
     jigsaw_puzzle = autofree(JigsawPuzzle.new())
     piece_holder = jigsaw_puzzle.get_node("PieceHolder")
 
-func test_can_split_image():
-    jigsaw_puzzle.texture = create_empty_image_texture(15, 15)
+func test_setting_split_creates_pieces():
+    jigsaw_puzzle.texture = create_empty_image_texture(360, 360)
     assert_property(jigsaw_puzzle, "split_dimension", Vector2i(1, 1), Vector2i(3, 3))
     var pieces = jigsaw_puzzle.get_pieces()
     assert_eq(pieces.size(), 9)
-    assert_eq(pieces[0].size, Vector2(5, 5))
     assert_eq(pieces[0].texture, jigsaw_puzzle.texture)
-    assert_eq(pieces[4].image_offset, Vector2(-5, -5))
-    assert_eq(pieces[4].position, Vector2(7, 7))
-    assert_eq(pieces[5].position, Vector2(14, 7))
 
+    # assert piece positions
+    assert_eq(pieces[4].image_offset, Vector2(-120, -120))
+    assert_eq(pieces[4].position, Vector2(122, 122))
+    assert_eq(pieces[5].position, Vector2(244, 122))
+
+    # assert piece shapes
+    assert_eq(pieces[0].size, Vector2(120, 120))
+    assert_ne(pieces[4].dimple, Vector4i(0, 0, 0, 0))
+    assert_not_null(pieces[4].dimple_image)
+    assert_ne(pieces[4].dimple_shape, PackedVector2Array([]))
+    print(pieces[4].dimple_shape)
+
+    # assert piece edges
+    assert_eq(pieces[0].dimple.x, 0)
+    assert_eq(pieces[0].dimple.y, 0)
+    assert_eq(pieces[1].dimple.x, 0)
+    assert_eq(pieces[2].dimple.x, 0)
+    assert_eq(pieces[2].dimple.w, 0)
+    assert_eq(pieces[3].dimple.y, 0)
+    assert_eq(pieces[5].dimple.w, 0)
+    assert_eq(pieces[6].dimple.y, 0)
+    assert_eq(pieces[6].dimple.z, 0)
+    assert_eq(pieces[7].dimple.z, 0)
+    assert_eq(pieces[8].dimple.w, 0)
+    assert_eq(pieces[8].dimple.z, 0)
+
+    # assert adjacent piece dimples
+    assert_eq(pieces[1].dimple.y, 100)
+    
     
 func test_split_dim_must_be_greater_than_zero():
     jigsaw_puzzle.split_dimension = Vector2i(0, 0)
@@ -36,8 +61,10 @@ func test_can_set_texture():
     var image_texture = create_empty_image_texture(10, 10)
     assert_property(jigsaw_puzzle, "texture", null, image_texture)
 
-# func test_can_change_texture_to_null():
-#     var image_texture = create_empty_image_texture(10, 10)
-#     assert_property(jigsaw_puzzle, "texture", null, image_texture)
-#     jigsaw_puzzle.texture = null
-#     assert_null(jigsaw_puzzle.texture)
+func test_can_change_texture_to_null():
+    jigsaw_puzzle.texture = null
+    assert_null(jigsaw_puzzle.texture)
+    jigsaw_puzzle.split_dimension = Vector2(2, 2)
+    var pieces = jigsaw_puzzle.get_pieces()
+    assert_eq(jigsaw_puzzle.split_dimension, Vector2i(2, 2))
+    assert_eq(pieces.size(), 0)

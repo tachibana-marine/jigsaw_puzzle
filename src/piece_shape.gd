@@ -35,7 +35,6 @@ func set_size(value):
     get: return dimple_shape
     set(value):
         dimple_shape = _reshape_dimple_shape_to_start_from_bottom_left(value)
-        print("reshaped:", dimple_shape)
         _update_polygon()
 
 func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
@@ -96,7 +95,6 @@ func _update_polygon():
     if (is_cavity[3] != null):
         vertices += (_get_dimple_shape(size.x, size.y - positions[3], 0.5 * PI, is_cavity[3]))
     queue_redraw()
-    print(vertices)
 
 var vertices: PackedVector2Array = []
 
