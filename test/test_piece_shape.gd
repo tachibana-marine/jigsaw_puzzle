@@ -7,19 +7,34 @@ var piece_shape = null
 func before_each():
     piece_shape = add_child_autofree(piece_shape_script.new())
 
+func build_packed2array(pairs: Array[Array]):
+    var res: PackedVector2Array = []
+    for pair in pairs:
+        res.append(Vector2(pair[0], pair[1]))
+    return res
+
 func test_piece_dimple_properties():
     piece_shape.size = Vector2(100, 100)
     assert_property(piece_shape, "dimple", Vector4i(0, 0, 0, 0), Vector4i(10, -20, 30, -30))
     # 30x20
-    assert_property(piece_shape, "dimple_shape", PackedVector2Array([]), PackedVector2Array([Vector2(0, 0), Vector2(0, -20), Vector2(-30, -20), Vector2(-30, 0)]))
-    assert_eq(piece_shape.vertices, PackedVector2Array([Vector2(100, 0), Vector2(90, 0), Vector2(90, -20), Vector2(60, -20), Vector2(60, 0), Vector2(0, 0),
-    Vector2(0, 20), Vector2(20, 20), Vector2(20, 50), Vector2(0, 50), Vector2(0, 100),
-    Vector2(30, 100), Vector2(30, 120), Vector2(60, 120), Vector2(60, 100), Vector2(100, 100),
-    Vector2(100, 70), Vector2(80, 70), Vector2(80, 40), Vector2(100, 40)]))
+    
+    assert_property(piece_shape, "dimple_shape", PackedVector2Array([]), build_packed2array([[0, 0], [0, -20], [-30, -20], [-30, 0]]))
+    assert_eq(piece_shape.vertices, build_packed2array([[100, 0], [90, 0], [90, -20], [60, -20], [60, 0], [0, 0],
+    [0, 20], [20, 20], [20, 50], [0, 50], [0, 100],
+    [30, 100], [30, 120], [60, 120], [60, 100], [100, 100],
+    [100, 70], [80, 70], [80, 40], [100, 40]]))
 
 func test_dimple_shape_starts_from_bottom_right():
-    piece_shape.dimple_shape = PackedVector2Array([Vector2(10, -20), Vector2(0, 0), Vector2(20, 0)])
+    piece_shape.dimple_shape = build_packed2array([[10, -20], [0, 0], [20, 0]])
     assert_eq(piece_shape.dimple_shape, PackedVector2Array([Vector2(0, 0), Vector2(-10, -20), Vector2(-20, 0)]))
+
+func test_dimple_shape_for_cavity_is_mirrored():
+    piece_shape.size = Vector2(100, 100)
+    piece_shape.dimple_shape = build_packed2array([[0, 0], [-10, -30], [-30, 0]])
+    piece_shape.dimple = Vector4i(20, -20, 0, 0)
+    assert_eq(piece_shape.vertices, build_packed2array([[100, 0], [80, 0], [70, -30], [50, 0], [0, 0],
+    [0, 20], [30, 40], [0, 50], [0, 100],
+    [100, 100]]))
 
 func test_set_empty_dimple_shape():
     piece_shape.dimple_shape = PackedVector2Array([])

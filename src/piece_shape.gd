@@ -35,12 +35,34 @@ func set_size(value):
     get: return dimple_shape
     set(value):
         dimple_shape = _reshape_dimple_shape_to_start_from_bottom_left(value)
+        _mirrored_dimple_shape = _get_mirrored_dimple_shape()
         _update_polygon()
+
+var _mirrored_dimple_shape: PackedVector2Array = []
+
+func _get_mirrored_dimple_shape() -> PackedVector2Array:
+    var res: PackedVector2Array = dimple_shape.duplicate()
+    res.reverse()
+    for i in range(res.size()):
+        res[i].x *= -1
+    res = _reshape_dimple_shape_to_start_from_bottom_left(res)
+    print(res)
+    return res
+
+func _get_bottom_right_of_polygon(input: PackedVector2Array):
+    var bottom_right = Vector2(-INF, -INF)
+    for vertex in input:
+        if vertex.x >= bottom_right.x && vertex.y >= bottom_right.y:
+            bottom_right = vertex
+    return bottom_right
 
 func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
     var shape = []
     var logger = []
-    for vertex in dimple_shape:
+    var local_dimple_shape = dimple_shape
+    if is_cavity:
+        local_dimple_shape = _mirrored_dimple_shape
+    for vertex in local_dimple_shape:
         var tmp = vertex
         if is_cavity:
             tmp.y *= -1
@@ -54,19 +76,12 @@ func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
 func _reshape_dimple_shape_to_start_from_bottom_left(input: PackedVector2Array):
     if input.is_empty():
         return input
+    var bottom_right = _get_bottom_right_of_polygon(input)
+    var index = input.find(bottom_right)
     var array: Array[Vector2] = []
-    var bottom_right = Vector2(-INF, -INF)
-    var index = 0
-    var i = 0
-    for vertex in input:
-        if vertex.x >= bottom_right.x && vertex.y >= bottom_right.y:
-            bottom_right = vertex
-            index = i
-        array.append(vertex)
-        i += 1
-    for j in range(array.size()):
-        array[j] -= bottom_right
-        
+    for i in range(input.size()):
+        array.append(input[i] - bottom_right)
+
     return PackedVector2Array(array.slice(index, -1) + [array[-1]] + array.slice(0, index))
     
 func _update_polygon():

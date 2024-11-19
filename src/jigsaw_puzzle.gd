@@ -15,14 +15,23 @@ class_name JigsawPuzzle
             split_dimension = value
             _reset_pieces()
 
+@export var margin: int = 2:
+    get: return margin
+    set(value):
+        margin = value
+        _reset_pieces()
+
 var dimple_image = load("res://asset/piece_dimple.png")
 
+var _pieces: Array[Piece] = []
+
 func get_pieces():
-    return $PieceHolder.get_children()
+    return _pieces
 
 func _reset_pieces():
-    for child in $PieceHolder.get_children():
+    for child in _pieces:
         child.queue_free()
+    _pieces.clear()
 
     if (texture == null):
         return
@@ -35,10 +44,10 @@ func _reset_pieces():
             piece.size = Vector2(piece_width, piece_height)
             piece.texture = texture
             piece.image_offset = -Vector2(piece_width * i, piece_height * j)
-            piece.position = Vector2((piece_width + 2) * i, (piece_height + 2) * j)
+            piece.position = Vector2((piece_width + margin) * i, (piece_height + margin) * j)
             var dimple = Vector4i(20, -20, 20, -20)
             var pieces = get_pieces()
-            var current_index = i + split_dimension.y * j
+            var current_index = i + split_dimension.x * j
             if (i > 0):
                 var prev_dimple = pieces[current_index - 1].dimple.w
                 print(prev_dimple, ",", piece_height)
@@ -58,6 +67,7 @@ func _reset_pieces():
                 dimple.z = 0
             piece.dimple = dimple
             piece.dimple_image = dimple_image
+            _pieces.append(piece)
             $PieceHolder.add_child(piece)
 
 func _init():
