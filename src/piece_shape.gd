@@ -34,7 +34,7 @@ func set_size(value):
 @export var dimple_shape: PackedVector2Array = []:
     get: return dimple_shape
     set(value):
-        dimple_shape = _reshape_dimple_shape_to_start_from_bottom_left(value)
+        dimple_shape = _reshape_dimple_shape_to_start_from_bottom_right(value)
         _mirrored_dimple_shape = _get_mirrored_dimple_shape()
         _update_polygon()
 
@@ -45,16 +45,22 @@ func _get_mirrored_dimple_shape() -> PackedVector2Array:
     res.reverse()
     for i in range(res.size()):
         res[i].x *= -1
-    res = _reshape_dimple_shape_to_start_from_bottom_left(res)
-    print(res)
+    res = _reshape_dimple_shape_to_start_from_bottom_right(res)
     return res
 
 func _get_bottom_right_of_polygon(input: PackedVector2Array):
-    var bottom_right = Vector2(-INF, -INF)
+    var bottom_right = -Vector2.INF
     for vertex in input:
         if vertex.x >= bottom_right.x && vertex.y >= bottom_right.y:
             bottom_right = vertex
     return bottom_right
+
+func _get_bottom_left_of_polygon(input: PackedVector2Array):
+    var bottom_left = Vector2(INF, -INF)
+    for vertex in input:
+        if vertex.x <= bottom_left.x && vertex.y >= bottom_left.y:
+            bottom_left = vertex
+    return bottom_left
 
 func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
     var shape = []
@@ -73,7 +79,7 @@ func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
     # print(logger, "logger")
     return shape
 
-func _reshape_dimple_shape_to_start_from_bottom_left(input: PackedVector2Array):
+func _reshape_dimple_shape_to_start_from_bottom_right(input: PackedVector2Array):
     if input.is_empty():
         return input
     var bottom_right = _get_bottom_right_of_polygon(input)
@@ -88,6 +94,9 @@ func _update_polygon():
     var coords = ["x", "y", "z", "w"]
     var is_cavity = []
     var positions = []
+    
+    var center_x = _get_bottom_right_of_polygon(dimple_shape).x - _get_bottom_left_of_polygon(dimple_shape).x
+    center_x /= 2
     for coord in coords:
        var d = dimple[coord]
        positions.append(abs(d))
@@ -99,16 +108,16 @@ func _update_polygon():
            is_cavity.append(null)
     vertices = [Vector2(size.x, 0)]
     if (is_cavity[0] != null):
-        vertices += (_get_dimple_shape(size.x - positions[0], 0, 0, is_cavity[0]))
+        vertices += (_get_dimple_shape(size.x - (positions[0] - center_x), 0, 0, is_cavity[0]))
     vertices.append(Vector2(0, 0))
     if (is_cavity[1] != null):
-        vertices += (_get_dimple_shape(0, positions[1], 1.5 * PI, is_cavity[1]))
+        vertices += (_get_dimple_shape(0, positions[1] - center_x, 1.5 * PI, is_cavity[1]))
     vertices.append(Vector2(0, size.y))
     if (is_cavity[2] != null):
-        vertices += (_get_dimple_shape(positions[2], size.y, PI, is_cavity[2]))
+        vertices += (_get_dimple_shape(positions[2] - center_x, size.y, PI, is_cavity[2]))
     vertices.append(Vector2(size.x, size.y))
     if (is_cavity[3] != null):
-        vertices += (_get_dimple_shape(size.x, size.y - positions[3], 0.5 * PI, is_cavity[3]))
+        vertices += (_get_dimple_shape(size.x, size.y - (positions[3] - center_x), 0.5 * PI, is_cavity[3]))
     queue_redraw()
 
 var vertices: PackedVector2Array = []
@@ -123,3 +132,7 @@ func _ready():
 func _draw() -> void:
     draw_log = ""
     draw_polygon(vertices, [Color.WHITE])
+    # for i in range(vertices.size()):
+    #     if i == 0:
+    #      continue
+    #     draw_line(vertices[i - 1], vertices[i], Color.WHITE, 5)

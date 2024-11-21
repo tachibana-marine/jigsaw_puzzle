@@ -45,7 +45,7 @@ func _reset_pieces():
             piece.texture = texture
             piece.image_offset = -Vector2(piece_width * i, piece_height * j)
             piece.position = Vector2((piece_width + margin) * i, (piece_height + margin) * j)
-            var dimple = Vector4i(20, -20, 20, -20)
+            var dimple = Vector4i(0, -30, 0, 39)
             var pieces = get_pieces()
             var current_index = i + split_dimension.x * j
             if (i > 0):
