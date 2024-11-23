@@ -3,7 +3,6 @@ extends GutTest
 var piece_shape_script = load("res://src/piece_shape.gd")
 var piece_shape = null
 
-
 func before_each():
     piece_shape = add_child_autofree(piece_shape_script.new())
 

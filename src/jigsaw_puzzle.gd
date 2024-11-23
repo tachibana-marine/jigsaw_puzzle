@@ -28,6 +28,35 @@ var _pieces: Array[Piece] = []
 func get_pieces():
     return _pieces
 
+  
+func _create_dimple(width: int, height: int, piece_top: PieceShape, piece_left: PieceShape, is_bottom = false, is_rightmost = false):
+    var get_sign = func(): if (randi() % 2 == 0): return -1 else: return 1
+    var dimple = Vector4i(randi_range(20, width - 20) * get_sign.call(),
+                          randi_range(20, height - 20) * get_sign.call(),
+                          randi_range(20, width - 20) * get_sign.call(),
+                          randi_range(20, height - 20) * get_sign.call())
+    if (piece_top == null):
+        dimple.x = 0
+    if (piece_left == null):
+        dimple.y = 0
+    if (is_bottom):
+        dimple.z = 0
+    if (is_rightmost):
+        dimple.w = 0
+    return dimple
+
+func _get_top_piece(x: int, y: int, width: int, _height: int):
+    var index = y * width + x
+    if (y > 0):
+        return _pieces[index - width]
+    return null
+
+func _get_left_piece(x: int, y: int, width: int, _height: int):
+    var index = y * width + x
+    if (x > 0):
+        return _pieces[index - 1]
+    return null
+
 func _reset_pieces():
     for child in _pieces:
         child.queue_free()
@@ -45,28 +74,8 @@ func _reset_pieces():
             piece.texture = texture
             piece.image_offset = -Vector2(piece_width * i, piece_height * j)
             piece.position = Vector2((piece_width + margin) * i, (piece_height + margin) * j)
-            var dimple = Vector4i(0, -30, 0, 39)
-            var pieces = get_pieces()
-            var current_index = i + split_dimension.x * j
-            if (i > 0):
-                var prev_dimple = pieces[current_index - 1].dimple.w
-                print(prev_dimple, ",", piece_height)
-                dimple.y = (piece_height - abs(prev_dimple))
-                if (prev_dimple > 0):
-                    dimple.y *= -1
-            elif (i == 0):
-                dimple.y = 0
-            if (i == split_dimension.x - 1):
-                dimple.w = 0
-
-            if (j > 0 and j < split_dimension.y - 1):
-                pass
-            elif (j == 0):
-                dimple.x = 0
-            elif (j == split_dimension.y - 1):
-                dimple.z = 0
-            piece.dimple = dimple
             piece.dimple_image = dimple_image
+            piece.dimple = _create_dimple(piece_width, piece_height, _get_top_piece(i, j, split_dimension.x, split_dimension.y), _get_left_piece(i, j, split_dimension.x, split_dimension.y))
             _pieces.append(piece)
             $PieceHolder.add_child(piece)
 

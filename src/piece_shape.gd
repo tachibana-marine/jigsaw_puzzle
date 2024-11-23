@@ -134,5 +134,5 @@ func _draw() -> void:
     draw_polygon(vertices, [Color.WHITE])
     # for i in range(vertices.size()):
     #     if i == 0:
-    #      continue
+    #          continue
     #     draw_line(vertices[i - 1], vertices[i], Color.WHITE, 5)

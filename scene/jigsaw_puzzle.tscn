@@ -51,3 +51,4 @@ position = Vector2(84, 17)
 script = ExtResource("7_3u0b6")
 texture = ExtResource("3_ertd7")
 split_dimension = Vector2i(5, 8)
+margin = 50
