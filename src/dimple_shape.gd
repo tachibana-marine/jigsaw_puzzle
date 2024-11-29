@@ -15,4 +15,11 @@ var dimple_root_height: float = 10:
 
 
 func get_shape():
-  return PackedVector2Array([])
+  return UtilTools.float_array_to_packed2array(
+    [
+      [0, 0],
+      [0, -dimple_root_height],
+      [-dimple_root_width, -dimple_root_height],
+      [-dimple_root_width, 0]
+    ]
+  )
