@@ -5,7 +5,7 @@
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     // "image": "mcr.microsoft.com/devcontainers/base:bullseye",
     "build": {
-        "dockerfile": "Dockerfile",
+        "dockerfile": "Dockerfile"
     },
     "customizations": {
         "vscode": {
@@ -17,9 +17,11 @@
             // "extensions": ["streetsidesoftware.code-spell-checker"]
         }
     },
+    "mounts": ["source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached"],
     "runArgs": [
         "--network=host"
-    ]
+    ],
+    "postStartCommand": "/workspaces/Godot/Godot_v4.3-stable_linux.x86_64 -e"
     // "postCreateCommand": "bash -s -i -c 'source venv/bin/activate'",
     // "mounts": [
     //     "source=../,target=/workspaces/jigsawpuzzle",
