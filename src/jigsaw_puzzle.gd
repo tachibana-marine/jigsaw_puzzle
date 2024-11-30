@@ -23,7 +23,18 @@ extends Node2D
     margin = value
     _reset_pieces()
 
+@export var dimple_ratio: float = 10:
+  get:
+    return dimple_ratio
+  set(value):
+    dimple_ratio = value
+    _reset_pieces()
+
 var dimple_image = load("res://asset/piece_dimple.png")
+
+var dimple_magnification: Vector2 = Vector2.ONE:
+  get:
+    return dimple_magnification
 
 var _pieces: Array[Piece] = []
 
@@ -43,10 +54,10 @@ func _create_dimple(
       return -1
     return 1
   var dimple = Vector4i(
-    randi_range(20, width - 20) * get_sign.call(),
-    randi_range(20, height - 20) * get_sign.call(),
-    randi_range(20, width - 20) * get_sign.call(),
-    randi_range(20, height - 20) * get_sign.call()
+    randi_range(20, 40) * get_sign.call(),
+    randi_range(20, 40) * get_sign.call(),
+    randi_range(20, 40) * get_sign.call(),
+    randi_range(20, 40) * get_sign.call()
   )
   if y == 0:
     dimple.x = 0
@@ -73,35 +84,51 @@ func _get_left_piece(x: int, y: int, width: int, _height: int):
   return null
 
 
+func _get_piece_size():
+  if texture:
+    return Vector2(
+      texture.get_size().x / split_dimension.x, texture.get_size().y / split_dimension.y
+    )
+  return null
+
+
 func _reset_pieces():
   for child in _pieces:
     child.queue_free()
   _pieces.clear()
-
   if texture == null:
     return
-  var piece_width = texture.get_size().x / split_dimension.x
-  var piece_height = texture.get_size().y / split_dimension.y
+
+  var piece_size = _get_piece_size()
+
+  var bitmap = BitMap.new()
+  bitmap.create_from_image_alpha(dimple_image.get_image())
+  var bitmap_size = bitmap.get_size()
+  dimple_magnification = Vector2(
+    (piece_size.x * dimple_ratio / 100) / bitmap_size.x,
+    (piece_size.y * dimple_ratio / 100) / bitmap_size.y
+  )
+  print(dimple_magnification)
+  var dimple_shape = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, bitmap.get_size()))[0]
+  for i in range(dimple_shape.size()):
+    dimple_shape[i] *= dimple_magnification
 
   for j in range(split_dimension.y):
     for i in range(split_dimension.x):
       var piece = Piece.new()
-      piece.size = Vector2(piece_width, piece_height)
+      piece.size = piece_size
       piece.texture = texture
-      piece.image_offset = -Vector2(piece_width * i, piece_height * j)
-      piece.position = Vector2((piece_width + margin) * i, (piece_height + margin) * j)
-      piece.dimple_image = dimple_image
-      piece.dimple = _create_dimple(
-        i,
-        j,
-        piece_width,
-        piece_height,
-      )
+      piece.image_offset = -Vector2(piece_size.x * i, piece_size.y * j)
+      piece.position = Vector2((piece_size.x + margin) * i, (piece_size.y + margin) * j)
+      piece.dimple_shape = dimple_shape
+      piece.dimple = _create_dimple(i, j, split_dimension.x, split_dimension.y)
+
       _pieces.append(piece)
       $PieceHolder.add_child(piece)
 
 
 func _init():
+  print(dimple_ratio)
   var sprite = Sprite2D.new()
   sprite.name = "Sprite"
   sprite.hide()

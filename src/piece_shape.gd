@@ -13,17 +13,18 @@ extends Node2D
     dimple = value
     _update_polygon()
 
-@export var dimple_image: Texture2D = null:
-  get:
-    return dimple_image
-  set(value):
-    dimple_image = value
-    if value == null:
-      dimple_shape = PackedVector2Array([])
-      return
-    var bitmap = BitMap.new()
-    bitmap.create_from_image_alpha(value.get_image())
-    dimple_shape = bitmap.opaque_to_polygons(Rect2(0, 0, 40, 40))[0]
+# @export var dimple_image: Texture2D = null:
+#   get:
+#     return dimple_image
+#   set(value):
+#     dimple_image = value
+#     if value == null:
+#       dimple_shape = PackedVector2Array([])
+#       return
+#     var bitmap = BitMap.new()
+#     bitmap.create_from_image_alpha(value.get_image())
+
+#     dimple_shape = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, dimple_image.get_size()))[0]
 
 @export var dimple_shape: PackedVector2Array = []:
   get:

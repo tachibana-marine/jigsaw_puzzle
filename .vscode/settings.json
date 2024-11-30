@@ -3,7 +3,9 @@
     "gut-extension.additionalOptions": "-d --headless",
 
     "editor.defaultFormatter": "EddieDover.gdscript-formatter-linter",
+    "editor.insertSpaces": true,
     "godotFormatterAndLinter.indentSpacesSize": 2,
     "godotFormatterAndLinter.indentType": "Spaces",
-    "godotFormatterAndLinter.lineLength": 100
+    "godotFormatterAndLinter.lineLength": 100,
+    "editor.tabSize": 2
 }

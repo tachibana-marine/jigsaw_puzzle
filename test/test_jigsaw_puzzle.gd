@@ -17,10 +17,14 @@ func before_each():
 func test_setting_split_creates_pieces():
   jigsaw_puzzle.texture = create_empty_image_texture(360, 360)
   assert_property(jigsaw_puzzle, "split_dimension", Vector2i(1, 1), Vector2i(3, 3))
+  assert_property(jigsaw_puzzle, "dimple_ratio", 10, 20)
   assert_property(jigsaw_puzzle, "margin", 2, 20)
   var pieces = jigsaw_puzzle.get_pieces()
   assert_eq(pieces.size(), 9)
   assert_eq(pieces[0].texture, jigsaw_puzzle.texture)
+
+  # FIXME: weird assertion
+  assert_eq(jigsaw_puzzle.dimple_magnification, Vector2(0.6, 0.6))
 
   # assert piece positions
   assert_eq(pieces[4].image_offset, Vector2(-120, -120))
@@ -30,7 +34,6 @@ func test_setting_split_creates_pieces():
   # assert piece shapes
   assert_eq(pieces[0].size, Vector2(120, 120))
   assert_ne(pieces[4].dimple, Vector4i(0, 0, 0, 0))
-  assert_not_null(pieces[4].dimple_image)
   assert_ne(pieces[4].dimple_shape, PackedVector2Array([]))
 
   # assert piece edges

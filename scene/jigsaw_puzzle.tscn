@@ -1,11 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://dkshcgquqqbp1"]
+[gd_scene load_steps=7 format=3 uid="uid://dkshcgquqqbp1"]
 
 [ext_resource type="Script" path="res://src/game.gd" id="1_bkqww"]
 [ext_resource type="Script" path="res://src/piece.gd" id="2_dhc1j"]
 [ext_resource type="Texture2D" uid="uid://donen7nykcgff" path="res://asset/pancake.png" id="3_ertd7"]
 [ext_resource type="Script" path="res://src/piece_shape.gd" id="4_2xtk1"]
 [ext_resource type="Texture2D" uid="uid://6c5yuj7v4wvp" path="res://icon.svg" id="5_nmnnm"]
-[ext_resource type="Texture2D" uid="uid://n2hsgcg2w51v" path="res://asset/piece_dimple.png" id="5_w0s4q"]
 [ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="7_3u0b6"]
 
 [node name="Node2D" type="Node2D"]
@@ -21,7 +20,6 @@ texture = ExtResource("3_ertd7")
 image_offset = Vector2(-55, -143)
 size = Vector2(100, 100)
 dimple = Vector4i(40, -30, 20, -30)
-dimple_image = ExtResource("5_w0s4q")
 dimple_shape = PackedVector2Array(0, 0, -4, -11, -4, -13, -16, -17, -16, -16, -21, -16, -26, -10, -27, -10, -27, -3, -20, 5, -19, 5, -18, 10, -17, 10, -20, 17, -20, 20, -3, 20, -4, 16, -4, 8, -1, 0)
 
 [node name="PieceShape" type="Node2D" parent="."]
@@ -38,7 +36,6 @@ position = Vector2(348, 131)
 script = ExtResource("4_2xtk1")
 size = Vector2(100, 100)
 dimple = Vector4i(23, -32, 28, -38)
-dimple_image = ExtResource("5_w0s4q")
 dimple_shape = PackedVector2Array(0, 0, -4, -11, -4, -13, -16, -17, -16, -16, -21, -16, -26, -10, -27, -10, -27, -3, -20, 5, -19, 5, -18, 10, -17, 10, -20, 17, -20, 20, -3, 20, -4, 16, -4, 8, -1, 0)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -50,5 +47,6 @@ offset = Vector2(10, 10)
 position = Vector2(84, 17)
 script = ExtResource("7_3u0b6")
 texture = ExtResource("3_ertd7")
-split_dimension = Vector2i(5, 8)
+split_dimension = Vector2i(5, 7)
 margin = 50
+dimple_ratio = 30.0
