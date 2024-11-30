@@ -33,12 +33,10 @@ func get_pieces():
 
 
 func _create_dimple(
+  x: int,
+  y: int,
   width: int,
   height: int,
-  piece_top: PieceShape,
-  piece_left: PieceShape,
-  is_bottom = false,
-  is_rightmost = false
 ):
   var get_sign = func():
     if randi() % 2 == 0:
@@ -50,13 +48,13 @@ func _create_dimple(
     randi_range(20, width - 20) * get_sign.call(),
     randi_range(20, height - 20) * get_sign.call()
   )
-  if piece_top == null:
+  if y == 0:
     dimple.x = 0
-  if piece_left == null:
+  if x == 0:
     dimple.y = 0
-  if is_bottom:
+  if y + 1 == height:
     dimple.z = 0
-  if is_rightmost:
+  if x + 1 == width:
     dimple.w = 0
   return dimple
 
@@ -94,10 +92,10 @@ func _reset_pieces():
       piece.position = Vector2((piece_width + margin) * i, (piece_height + margin) * j)
       piece.dimple_image = dimple_image
       piece.dimple = _create_dimple(
+        i,
+        j,
         piece_width,
         piece_height,
-        _get_top_piece(i, j, split_dimension.x, split_dimension.y),
-        _get_left_piece(i, j, split_dimension.x, split_dimension.y)
       )
       _pieces.append(piece)
       $PieceHolder.add_child(piece)
