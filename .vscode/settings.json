@@ -1,11 +1,12 @@
 {
+    "files.insertFinalNewline": true,
+    "editor.defaultFormatter": "EddieDover.gdscript-formatter-linter",
+
     "godotTools.editorPath.godot4": "/workspaces/Godot/Godot_v4.3-stable_linux.x86_64",
+    
     "gut-extension.additionalOptions": "-d --headless",
 
-    "editor.defaultFormatter": "EddieDover.gdscript-formatter-linter",
-    "editor.insertSpaces": true,
     "godotFormatterAndLinter.indentSpacesSize": 2,
     "godotFormatterAndLinter.indentType": "Spaces",
-    "godotFormatterAndLinter.lineLength": 100,
-    "editor.tabSize": 2
+    "godotFormatterAndLinter.lineLength": 100
 }

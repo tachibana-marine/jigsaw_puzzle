@@ -44,7 +44,8 @@ texture = ExtResource("5_nmnnm")
 offset = Vector2(10, 10)
 
 [node name="JigsawPuzzle" type="Node2D" parent="."]
-position = Vector2(84, 17)
+position = Vector2(442, 116)
+scale = Vector2(0.5, 0.5)
 script = ExtResource("7_3u0b6")
 texture = ExtResource("3_ertd7")
 split_dimension = Vector2i(5, 7)
