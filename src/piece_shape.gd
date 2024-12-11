@@ -13,19 +13,6 @@ extends Node2D
     dimple = value
     _update_polygon()
 
-# @export var dimple_image: Texture2D = null:
-#   get:
-#     return dimple_image
-#   set(value):
-#     dimple_image = value
-#     if value == null:
-#       dimple_shape = PackedVector2Array([])
-#       return
-#     var bitmap = BitMap.new()
-#     bitmap.create_from_image_alpha(value.get_image())
-
-#     dimple_shape = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, dimple_image.get_size()))[0]
-
 @export var dimple_shape: PackedVector2Array = []:
   get:
     return dimple_shape
@@ -85,9 +72,6 @@ func _get_dimple_shape(x, y, angle, is_cavity = false) -> PackedVector2Array:
   if is_cavity:
     local_dimple_shape = _mirrored_dimple_shape
 
-    # round the result to the 4th digit
-
-    # print(logger, "logger")
   for vertex in local_dimple_shape:
     var tmp = vertex
     if is_cavity:

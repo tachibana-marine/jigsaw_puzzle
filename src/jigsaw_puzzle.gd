@@ -8,7 +8,7 @@ extends Node2D
   set(value):
     texture = value
 
-@export var split_dimension: Vector2i = Vector2i(1, 1):
+@export var split_dimension: Vector2i = Vector2i(2, 2):
   get:
     return split_dimension
   set(value):

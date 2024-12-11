@@ -1,6 +1,7 @@
 {
     "files.insertFinalNewline": true,
     "editor.defaultFormatter": "EddieDover.gdscript-formatter-linter",
+    "editor.tabSize": 2,
 
     "godotTools.editorPath.godot4": "/workspaces/Godot/Godot_v4.3-stable_linux.x86_64",
     
