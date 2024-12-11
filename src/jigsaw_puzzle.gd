@@ -2,11 +2,14 @@
 class_name JigsawPuzzle
 extends Node2D
 
+signal piece_too_small
+
 @export var texture: Texture2D = null:
   get:
     return texture
   set(value):
     texture = value
+    _reset_pieces()
 
 @export var split_dimension: Vector2i = Vector2i(2, 2):
   get:
@@ -16,7 +19,7 @@ extends Node2D
       split_dimension = value
       _reset_pieces()
 
-@export var margin: int = 2:
+@export var margin: int = 0:
   get:
     return margin
   set(value):
@@ -59,6 +62,7 @@ func _create_dimple(
     randi_range(20, 40) * get_sign.call(),
     randi_range(20, 40) * get_sign.call()
   )
+  # edges
   if y == 0:
     dimple.x = 0
   if x == 0:
@@ -67,20 +71,22 @@ func _create_dimple(
     dimple.z = 0
   if x + 1 == width:
     dimple.w = 0
+
+  # align dimple position with previous pieces
+  if x != 0:
+    var left_piece = _get_piece_from_coord(x - 1, y, width, height)
+    dimple.y = (
+      -1
+      * (left_piece.dimple.w / abs(left_piece.dimple.w))
+      * (left_piece.size.y - abs(left_piece.dimple.w))
+    )
   return dimple
 
 
-func _get_top_piece(x: int, y: int, width: int, _height: int):
+func _get_piece_from_coord(x: int, y: int, width: int, _height: int):
   var index = y * width + x
-  if y > 0:
-    return _pieces[index - width]
-  return null
-
-
-func _get_left_piece(x: int, y: int, width: int, _height: int):
-  var index = y * width + x
-  if x > 0:
-    return _pieces[index - 1]
+  if index >= 0 && index < _pieces.size():
+    return _pieces[index]
   return null
 
 
@@ -100,7 +106,9 @@ func _reset_pieces():
     return
 
   var piece_size = _get_piece_size()
-
+  if piece_size < Vector2(100, 100):
+    print("small!")
+    emit_signal("piece_too_small")
   var bitmap = BitMap.new()
   bitmap.create_from_image_alpha(dimple_image.get_image())
   var bitmap_size = bitmap.get_size()

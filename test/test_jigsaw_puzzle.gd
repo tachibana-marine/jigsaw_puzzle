@@ -24,10 +24,16 @@ func test_split_dim_can_be_set_but_must_be_greater_than_zero():
   assert_eq(jigsaw_puzzle.split_dimension, Vector2i(3, 3))
 
 
+func test_emits_signal_if_piece_size_is_smaller_than_100():
+  watch_signals(jigsaw_puzzle)
+  var image_texture = create_empty_image_texture(99, 99)
+  jigsaw_puzzle.texture = image_texture
+  assert_signal_emitted(jigsaw_puzzle, "piece_too_small")
+
+
 func test_can_set_texture():
   var image_texture = create_empty_image_texture(100, 100)
   assert_property(jigsaw_puzzle, "texture", null, image_texture)
-  jigsaw_puzzle.split_dimension = Vector2i(2, 2)
   var pieces = jigsaw_puzzle.get_pieces()
   assert_eq(pieces[0].texture, jigsaw_puzzle.texture)
 
@@ -83,37 +89,10 @@ func test_center_piece_has_aligned_dimples():
   assert_ne(middle_piece.dimple, Vector4i(0, 0, 0, 0))
   assert_ne(middle_piece.dimple_shape, PackedVector2Array([]))
 
-  # assert piece edges
-  # top left
-
-#   assert_eq(pieces[0].dimple.z, 120 - pieces[3].dimple.z)
-#   assert_eq(pieces[0].dimple.w, 120 - pieces[1].dimple.y)
-
-#   # top middle
-#   assert_eq(pieces[1].dimple.x, 0)
-#   assert_eq(pieces[1].dimple.z, 120 - pieces[4].dimple.x)
-#   assert_eq(pieces[1].dimple.w, 120 - pieces[2].dimple.y)
-#   # top right
-#   assert_eq(pieces[2].dimple.x, 0)
-#   assert_eq(pieces[2].dimple.z, 120 - pieces[5].dimple.x)
-#   assert_eq(pieces[2].dimple.w, 0)
-#   # center left
-#   assert_eq(pieces[3].dimple.y, 0)
-#   assert_eq(pieces[3].dimple.z, 120 - pieces[6].dimple.x)
-#   assert_eq(pieces[3].dimple.w, 120 - pieces[5].dimple.y)
-#   # center right
-#   assert_eq(pieces[5].dimple.z, 120 - pieces[7].dimple.x)
-#   assert_eq(pieces[5].dimple.w, 0)
-#   # bottom left
-#   assert_eq(pieces[6].dimple.y, 0)
-#   assert_eq(pieces[6].dimple.z, 0)
-#   assert_eq(pieces[6].dimple.w, 120 - pieces[7].dimple.y)
-#   # bottom middle
-#   assert_eq(pieces[7].dimple.z, 0)
-#   assert_eq(pieces[7].dimple.w, 120 - pieces[8].dimple.y)
-#   # bottom right
-#   assert_eq(pieces[8].dimple.w, 0)
-#   assert_eq(pieces[8].dimple.z, 0)
-
-# assert adjacent piece dimples
-# assert_eq(pieces[1].dimple.y, 100)
+  # assert_eq(pieces[1].dimple.z, 100 - pieces[4].dimple.x)
+  assert_eq(
+    pieces[4].dimple.y,
+    -1 * (pieces[3].dimple.w / abs(pieces[3].dimple.w)) * (100 - abs(pieces[3].dimple.w))
+  )
+  # assert_eq(pieces[5].dimple.y, 100 - pieces[4].dimple.w)
+  # assert_eq(pieces[7].dimple.x, 100 - pieces[4].dimple.z)
