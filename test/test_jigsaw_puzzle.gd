@@ -2,6 +2,7 @@ extends GutTest
 
 var jigsaw_puzzle = null
 var piece_holder = null
+var double_rand = null
 
 
 func create_empty_image_texture(width: int, height: int):
@@ -10,7 +11,9 @@ func create_empty_image_texture(width: int, height: int):
 
 
 func before_each():
+  double_rand = partial_double(RandomTools).new()
   jigsaw_puzzle = autofree(JigsawPuzzle.new())
+  jigsaw_puzzle.random_tool = double_rand
   piece_holder = jigsaw_puzzle.get_node("PieceHolder")
 
 
@@ -73,9 +76,16 @@ func test_edge_dimples_do_not_exist():
   assert_eq(pieces[8].dimple.w, 0)
 
 
-# func test_piece_dimple_does_not_intersect_each_other():
-#   jigsaw_puzzle.texture = create_empty_image_texture(400, 400)
-#   jigsaw_puzzle.split_dimension = Vector2i(2, 2)
+func test_piece_dimple_does_not_intersect_each_other():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var dimple_image = jigsaw_puzzle.dimple_image
+
+  var size = dimple_image.get_size()
+  size *= jigsaw_puzzle.dimple_magnification
+  var piece = jigsaw_puzzle.get_pieces()[4]
+  var rand_range_params = get_call_parameters(double_rand, "a_randi_range")
+  assert_eq(rand_range_params, [size.y, piece.get_size().x - size.y])
 
 
 func test_center_piece_has_aligned_dimples():

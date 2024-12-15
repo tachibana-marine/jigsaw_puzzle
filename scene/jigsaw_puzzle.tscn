@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://donen7nykcgff" path="res://asset/pancake.png" id="3_ertd7"]
 [ext_resource type="Script" path="res://src/piece_shape.gd" id="4_2xtk1"]
 [ext_resource type="Texture2D" uid="uid://6c5yuj7v4wvp" path="res://icon.svg" id="5_nmnnm"]
-[ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="7_3u0b6"]
+[ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="6_wuai8"]
 
 [node name="Node2D" type="Node2D"]
 position = Vector2(-45, 0)
@@ -44,10 +44,10 @@ texture = ExtResource("5_nmnnm")
 offset = Vector2(10, 10)
 
 [node name="JigsawPuzzle" type="Node2D" parent="."]
-position = Vector2(442, 116)
+position = Vector2(92, 48)
 scale = Vector2(0.5, 0.5)
-script = ExtResource("7_3u0b6")
+script = ExtResource("6_wuai8")
 texture = ExtResource("3_ertd7")
-split_dimension = Vector2i(3, 5)
-margin = 50
-dimple_ratio = 18.0
+split_dimension = Vector2i(21, 23)
+margin = 40
+dimple_ratio = 30.0

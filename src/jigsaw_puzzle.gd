@@ -33,6 +33,11 @@ signal piece_too_small
     dimple_ratio = value
     _reset_pieces()
 
+# just to make random functions testable
+var random_tool: RandomTools = RandomTools.new():
+  set(value):
+    random_tool = value
+
 var dimple_image = load("res://asset/piece_dimple.png")
 
 var dimple_magnification: Vector2 = Vector2.ONE:
@@ -40,6 +45,17 @@ var dimple_magnification: Vector2 = Vector2.ONE:
     return dimple_magnification
 
 var _pieces: Array[Piece] = []
+
+
+func _init():
+  var sprite = Sprite2D.new()
+  sprite.name = "Sprite"
+  sprite.hide()
+  add_child(sprite)
+
+  var piece_holder = Node2D.new()
+  piece_holder.name = "PieceHolder"
+  add_child(piece_holder)
 
 
 func get_pieces():
@@ -52,15 +68,17 @@ func _create_dimple(
   width: int,
   height: int,
 ):
+  var piece_size = _get_piece_size()
+  var dimple_size_y = dimple_image.get_size().y * dimple_magnification.y
   var get_sign = func():
-    if randi() % 2 == 0:
+    if random_tool.a_randi() % 2 == 0:
       return -1
     return 1
   var dimple = Vector4i(
-    randi_range(20, 40) * get_sign.call(),
-    randi_range(20, 40) * get_sign.call(),
-    randi_range(20, 40) * get_sign.call(),
-    randi_range(20, 40) * get_sign.call()
+    random_tool.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
+    random_tool.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call(),
+    random_tool.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
+    random_tool.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call()
   )
   # edges
   if y == 0:
@@ -116,7 +134,6 @@ func _reset_pieces():
     (piece_size.x * dimple_ratio / 100) / bitmap_size.x,
     (piece_size.y * dimple_ratio / 100) / bitmap_size.y
   )
-  print(dimple_magnification)
   var dimple_shape = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, bitmap.get_size()))[0]
   for i in range(dimple_shape.size()):
     dimple_shape[i] *= dimple_magnification
@@ -130,18 +147,5 @@ func _reset_pieces():
       piece.position = Vector2((piece_size.x + margin) * i, (piece_size.y + margin) * j)
       piece.dimple_shape = dimple_shape
       piece.dimple = _create_dimple(i, j, split_dimension.x, split_dimension.y)
-
       _pieces.append(piece)
       $PieceHolder.add_child(piece)
-
-
-func _init():
-  print(dimple_ratio)
-  var sprite = Sprite2D.new()
-  sprite.name = "Sprite"
-  sprite.hide()
-  add_child(sprite)
-
-  var piece_holder = Node2D.new()
-  piece_holder.name = "PieceHolder"
-  add_child(piece_holder)

@@ -138,7 +138,8 @@ func _ready():
 func _draw() -> void:
   draw_log = ""
   draw_polygon(vertices, [Color.WHITE])
+  # for debugging
   # for i in range(vertices.size()):
-  #     if i == 0:
-  #          continue
-  #     draw_line(vertices[i - 1], vertices[i], Color.WHITE, 5)
+  #   if i == 0:
+  #     continue
+  #   draw_line(vertices[i - 1], vertices[i], Color.WHITE, 2)
