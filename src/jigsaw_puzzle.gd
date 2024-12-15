@@ -40,7 +40,8 @@ var random_tool: RandomTools = RandomTools.new():
 
 var dimple_image = load("res://asset/piece_dimple.png")
 
-var dimple_magnification: Vector2 = Vector2.ONE:
+# coefficient to scale dimple shape with the piece size
+var dimple_magnification: float = 1.0:
   get:
     return dimple_magnification
 
@@ -69,11 +70,12 @@ func _create_dimple(
   height: int,
 ):
   var piece_size = _get_piece_size()
-  var dimple_size_y = dimple_image.get_size().y * dimple_magnification.y
+  var dimple_size_y = dimple_image.get_size().y * dimple_magnification
   var get_sign = func():
     if random_tool.a_randi() % 2 == 0:
       return -1
     return 1
+  dimple_size_y += 2
   var dimple = Vector4i(
     random_tool.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
     random_tool.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call(),
@@ -126,14 +128,14 @@ func _reset_pieces():
   var piece_size = _get_piece_size()
   if piece_size < Vector2(100, 100):
     print("small!")
-    emit_signal("piece_too_small")
+    piece_too_small.emit()
   var bitmap = BitMap.new()
   bitmap.create_from_image_alpha(dimple_image.get_image())
   var bitmap_size = bitmap.get_size()
-  dimple_magnification = Vector2(
-    (piece_size.x * dimple_ratio / 100) / bitmap_size.x,
-    (piece_size.y * dimple_ratio / 100) / bitmap_size.y
-  )
+  var smaller_piece_size = piece_size.x
+  if piece_size.y < smaller_piece_size:
+    smaller_piece_size = piece_size.y
+  dimple_magnification = (dimple_ratio * smaller_piece_size) / (bitmap_size.x * 100)
   var dimple_shape = bitmap.opaque_to_polygons(Rect2(Vector2.ZERO, bitmap.get_size()))[0]
   for i in range(dimple_shape.size()):
     dimple_shape[i] *= dimple_magnification

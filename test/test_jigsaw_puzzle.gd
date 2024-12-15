@@ -83,6 +83,7 @@ func test_piece_dimple_does_not_intersect_each_other():
 
   var size = dimple_image.get_size()
   size *= jigsaw_puzzle.dimple_magnification
+  size.y += 2  # margin
   var piece = jigsaw_puzzle.get_pieces()[4]
   var rand_range_params = get_call_parameters(double_rand, "a_randi_range")
   assert_eq(rand_range_params, [size.y, piece.get_size().x - size.y])
@@ -106,3 +107,16 @@ func test_center_piece_has_aligned_dimples():
   )
   # assert_eq(pieces[5].dimple.y, 100 - pieces[4].dimple.w)
   # assert_eq(pieces[7].dimple.x, 100 - pieces[4].dimple.z)
+
+
+func test_dimple_ratio_correctly_scales_dimple_shape():
+  # currently dimple_shape is 40x40 image
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 300)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  jigsaw_puzzle.dimple_ratio = 30  # 30%
+  assert_eq(jigsaw_puzzle.dimple_magnification * 40, 50 * 0.3)
+  # dimple_magnification is determined by the smaller side
+  jigsaw_puzzle.texture = create_empty_image_texture(300, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  jigsaw_puzzle.dimple_ratio = 30  # 30%
+  assert_eq(jigsaw_puzzle.dimple_magnification * 40, 50 * 0.3)
