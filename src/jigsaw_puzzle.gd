@@ -2,8 +2,6 @@
 class_name JigsawPuzzle
 extends Node2D
 
-signal piece_too_small
-
 @export var texture: Texture2D = null:
   get:
     return texture
@@ -33,17 +31,17 @@ signal piece_too_small
     dimple_ratio = value
     _reset_pieces()
 
-# just to make random functions testable
-var random_tool: RandomTools = RandomTools.new():
-  set(value):
-    random_tool = value
-
 var dimple_image = load("res://asset/piece_dimple.png")
 
 # coefficient to scale dimple shape with the piece size
 var dimple_magnification: float = 1.0:
   get:
     return dimple_magnification
+
+# just to make random functions testable
+var random_tool: RandomTools = RandomTools.new():
+  set(value):
+    random_tool = value
 
 var _pieces: Array[Piece] = []
 
@@ -100,6 +98,14 @@ func _create_dimple(
       * (left_piece.dimple.w / abs(left_piece.dimple.w))
       * (left_piece.size.y - abs(left_piece.dimple.w))
     )
+  if y != 0:
+    var piece_above = _get_piece_from_coord(x, y - 1, width, height)
+    dimple.x = (
+      -1
+      * (piece_above.dimple.z / abs(piece_above.dimple.z))
+      * (piece_above.size.x - abs(piece_above.dimple.z))
+    )
+
   return dimple
 
 
@@ -126,9 +132,6 @@ func _reset_pieces():
     return
 
   var piece_size = _get_piece_size()
-  if piece_size < Vector2(100, 100):
-    print("small!")
-    piece_too_small.emit()
   var bitmap = BitMap.new()
   bitmap.create_from_image_alpha(dimple_image.get_image())
   var bitmap_size = bitmap.get_size()

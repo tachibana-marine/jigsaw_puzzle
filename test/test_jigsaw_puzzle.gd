@@ -27,13 +27,6 @@ func test_split_dim_can_be_set_but_must_be_greater_than_zero():
   assert_eq(jigsaw_puzzle.split_dimension, Vector2i(3, 3))
 
 
-func test_emits_signal_if_piece_size_is_smaller_than_100():
-  watch_signals(jigsaw_puzzle)
-  var image_texture = create_empty_image_texture(99, 99)
-  jigsaw_puzzle.texture = image_texture
-  assert_signal_emitted(jigsaw_puzzle, "piece_too_small")
-
-
 func test_can_set_texture():
   var image_texture = create_empty_image_texture(100, 100)
   assert_property(jigsaw_puzzle, "texture", null, image_texture)
@@ -104,6 +97,10 @@ func test_center_piece_has_aligned_dimples():
   assert_eq(
     pieces[4].dimple.y,
     -1 * (pieces[3].dimple.w / abs(pieces[3].dimple.w)) * (100 - abs(pieces[3].dimple.w))
+  )
+  assert_eq(
+    pieces[4].dimple.x,
+    -1 * (pieces[1].dimple.z / abs(pieces[1].dimple.z)) * (100 - abs(pieces[1].dimple.z))
   )
   # assert_eq(pieces[5].dimple.y, 100 - pieces[4].dimple.w)
   # assert_eq(pieces[7].dimple.x, 100 - pieces[4].dimple.z)
