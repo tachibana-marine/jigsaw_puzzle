@@ -39,9 +39,10 @@ var dimple_magnification: float = 1.0:
     return dimple_magnification
 
 # just to make random functions testable
-var random_tool: RandomTools = RandomTools.new():
+var random_tools: RandomTools = RandomTools.new():
   set(value):
-    random_tool = value
+    random_tools.free()
+    random_tools = value
 
 var _pieces: Array[Piece] = []
 
@@ -70,15 +71,15 @@ func _create_dimple(
   var piece_size = _get_piece_size()
   var dimple_size_y = dimple_image.get_size().y * dimple_magnification
   var get_sign = func():
-    if random_tool.a_randi() % 2 == 0:
+    if random_tools.a_randi() % 2 == 0:
       return -1
     return 1
   dimple_size_y += 2
   var dimple = Vector4i(
-    random_tool.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
-    random_tool.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call(),
-    random_tool.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
-    random_tool.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call()
+    random_tools.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
+    random_tools.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call(),
+    random_tools.a_randi_range(dimple_size_y, piece_size.x - dimple_size_y) * get_sign.call(),
+    random_tools.a_randi_range(dimple_size_y, piece_size.y - dimple_size_y) * get_sign.call()
   )
   # edges
   if y == 0:

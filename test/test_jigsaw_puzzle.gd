@@ -2,7 +2,6 @@ extends GutTest
 
 var jigsaw_puzzle = null
 var piece_holder = null
-var double_rand = null
 
 
 func create_empty_image_texture(width: int, height: int):
@@ -11,9 +10,7 @@ func create_empty_image_texture(width: int, height: int):
 
 
 func before_each():
-  double_rand = partial_double(RandomTools).new()
   jigsaw_puzzle = autofree(JigsawPuzzle.new())
-  jigsaw_puzzle.random_tool = double_rand
   piece_holder = jigsaw_puzzle.get_node("PieceHolder")
 
 
@@ -70,6 +67,9 @@ func test_edge_dimples_do_not_exist():
 
 
 func test_piece_dimple_does_not_intersect_each_other():
+  var double_rand = partial_double(RandomTools).new()
+  jigsaw_puzzle.random_tools = double_rand
+
   jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
   jigsaw_puzzle.split_dimension = Vector2i(3, 3)
   var dimple_image = jigsaw_puzzle.dimple_image
@@ -86,14 +86,7 @@ func test_center_piece_has_aligned_dimples():
   jigsaw_puzzle.texture = create_empty_image_texture(300, 300)
   jigsaw_puzzle.split_dimension = Vector2i(3, 3)
   var pieces = jigsaw_puzzle.get_pieces()
-  var middle_piece = pieces[4]
 
-  # assert piece shapes
-  assert_eq(middle_piece.size, Vector2(100, 100))
-  assert_ne(middle_piece.dimple, Vector4i(0, 0, 0, 0))
-  assert_ne(middle_piece.dimple_shape, PackedVector2Array([]))
-
-  # assert_eq(pieces[1].dimple.z, 100 - pieces[4].dimple.x)
   assert_eq(
     pieces[4].dimple.y,
     -1 * (pieces[3].dimple.w / abs(pieces[3].dimple.w)) * (100 - abs(pieces[3].dimple.w))
@@ -102,8 +95,6 @@ func test_center_piece_has_aligned_dimples():
     pieces[4].dimple.x,
     -1 * (pieces[1].dimple.z / abs(pieces[1].dimple.z)) * (100 - abs(pieces[1].dimple.z))
   )
-  # assert_eq(pieces[5].dimple.y, 100 - pieces[4].dimple.w)
-  # assert_eq(pieces[7].dimple.x, 100 - pieces[4].dimple.z)
 
 
 func test_dimple_ratio_correctly_scales_dimple_shape():

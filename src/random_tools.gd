@@ -1,5 +1,5 @@
 class_name RandomTools
-extends Resource
+extends Object
 
 
 func a_randi_range(from: int, to: int) -> int:
