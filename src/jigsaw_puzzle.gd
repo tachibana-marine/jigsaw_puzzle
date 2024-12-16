@@ -58,6 +58,12 @@ func _init():
   add_child(piece_holder)
 
 
+func _notification(what):
+  if what == NOTIFICATION_PREDELETE:
+    if is_instance_valid(random_tools):
+      random_tools.free()
+
+
 func get_pieces():
   return _pieces
 
