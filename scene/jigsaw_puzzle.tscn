@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dkshcgquqqbp1"]
+[gd_scene load_steps=8 format=3 uid="uid://dkshcgquqqbp1"]
 
 [ext_resource type="Script" path="res://src/game.gd" id="1_bkqww"]
 [ext_resource type="Script" path="res://src/piece.gd" id="2_dhc1j"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://src/piece_shape.gd" id="4_2xtk1"]
 [ext_resource type="Texture2D" uid="uid://6c5yuj7v4wvp" path="res://icon.svg" id="5_nmnnm"]
 [ext_resource type="Script" path="res://src/jigsaw_puzzle.gd" id="6_wuai8"]
+[ext_resource type="Script" path="res://src/draggable.gd" id="7_sx0wx"]
 
 [node name="Node2D" type="Node2D"]
 position = Vector2(-45, 0)
@@ -44,9 +45,14 @@ texture = ExtResource("5_nmnnm")
 offset = Vector2(10, 10)
 
 [node name="JigsawPuzzle" type="Node2D" parent="."]
-position = Vector2(92, 47)
+visible = false
+position = Vector2(44, 0)
 script = ExtResource("6_wuai8")
 texture = ExtResource("3_ertd7")
 split_dimension = Vector2i(12, 16)
 margin = 1
 dimple_ratio = 30.0
+
+[node name="Draggable" type="Area2D" parent="."]
+position = Vector2(567, 275)
+script = ExtResource("7_sx0wx")
