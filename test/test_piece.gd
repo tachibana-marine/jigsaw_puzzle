@@ -20,6 +20,8 @@ func before_each():
 func test_piece_properties():
   var image_texture = create_empty_image_texture(1000, 1000)
   piece.size = Vector2(10, 10)
+  var collision_shape = piece.get_node("CollisionShape")
+  assert_eq(collision_shape.shape.size, Vector2(10, 10))
   # background covers twice as large area as the piece_shape
   # so that the dimples can be covered
   assert_eq(background.size, Vector2(20, 20))
@@ -28,6 +30,11 @@ func test_piece_properties():
   assert_property(piece, "image_offset", Vector2.ZERO, Vector2(-3, -5))
   assert_eq(sprite.texture, image_texture)
   assert_eq(sprite.offset, Vector2(-3, -5))
+
+  piece.size = Vector2(20, 20)
+  assert_eq(collision_shape.shape.size, Vector2(20, 20))
+  assert_eq(background.size, Vector2(40, 40))
+  assert_eq(background.position, Vector2(-10, -10))
 
 # use this if you add null check to texture
 # func test_change_image_texture_to_null():

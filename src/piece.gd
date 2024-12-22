@@ -21,6 +21,7 @@ func set_size(value):
   super.set_size(value)
   $Background.size = value * 2
   $Background.position = -size / 2
+  $CollisionShape.shape.size = value
 
 
 func _init():
@@ -34,3 +35,10 @@ func _init():
   sprite.centered = false
   sprite.name = "Sprite"
   add_child(sprite)
+
+  var collision = CollisionShape2D.new()
+  var rectangle = RectangleShape2D.new()
+  rectangle.size = size
+  collision.shape = rectangle
+  collision.name = "CollisionShape"
+  add_child(collision)

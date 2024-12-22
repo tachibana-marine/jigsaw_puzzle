@@ -1,32 +1,99 @@
 extends GutTest
 
-var draggable = null
-var sender = InputSender.new(Input)
+var _sender = InputSender.new(Input)
 
 
-func before_each():
-  draggable = add_child_autofree(Draggable.new())
+func should_skip_script():
+  if DisplayServer.get_name() == "headless":
+    return "Skip Input tests when running headless"
+
+
+func _get_draggable():
+  var draggable = Draggable.new()
+  var collision = CollisionShape2D.new()
+  var rect_shape = RectangleShape2D.new()
+  rect_shape.size = Vector2(10, 10)
+  collision.shape = rect_shape
+  draggable.add_child(collision)
+  return draggable
+
+
+func before_all():
+  _sender.mouse_warp = true
 
 
 func after_each():
-  sender.release_all()
-  sender.clear()
+  _sender.release_all()
+  _sender.clear()
 
 
-func test_emits_signal_on_click():
+func test_emits_signal_on_mouse_button_up_and_down():
+  var draggable = add_child_autofree(_get_draggable())
+  draggable.position = Vector2.ZERO
+  watch_signals(draggable)
+  _sender.mouse_left_button_down(Vector2(1, 1)).wait(.01)
+  await (_sender.idle)
+  assert_signal_emit_count(draggable, "mouse_down_detected", 1)
+  assert_signal_not_emitted(draggable, "mouse_up_detected")
+  _sender.mouse_left_button_up(Vector2(1, 1)).wait(.01)
+  await (_sender.idle)
+  assert_signal_emit_count(draggable, "mouse_up_detected", 1)
+
+
+func test_draggable_can_be_dragged():
+  var draggable = add_child_autofree(_get_draggable())
+  var mouse_init_pos = Vector2(1, 1)
+  var mouse_final_pos = Vector2(20, 20)
   draggable.position = Vector2.ZERO
 
-  watch_signals(draggable)
-  # have to wait 1f to prevent the button down state to carry over to the next test
-  sender.mouse_left_button_down(Vector2(1, 1)).hold_for(.01).wait("1f")
-  await (sender.idle)
-  assert_signal_emitted(draggable, "mouse_down_detected")
+  (
+    _sender
+    . mouse_set_position(mouse_init_pos, mouse_init_pos)
+    . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+    . wait(.01)
+    . mouse_motion(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+    . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+  )
+  await (_sender.idle)
+  assert_eq(draggable.position, mouse_final_pos)
+
+
+func test_draggable_works_in_global_space():
+  var parent = Node2D.new()
+  parent.position = Vector2(20, 20)
+  var draggable_child = _get_draggable()
+  parent.add_child(draggable_child)
+  watch_signals(draggable_child)
+  add_child_autofree(parent)
+
+  draggable_child.position = Vector2(10, 10)  # (30,30) in global space
+  var mouse_init_pos = Vector2(31, 31)
+  var mouse_final_pos = Vector2(50, 50)
+
+  (
+    _sender
+    . mouse_set_position(mouse_init_pos, mouse_init_pos)
+    . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+    . wait(.01)
+    . mouse_motion(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+    . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+  )
+  await (_sender.idle)
+  assert_signal_emitted(draggable_child, "mouse_up_detected")
+  assert_eq(draggable_child.position, Vector2(30, 30))
+  assert_eq(draggable_child.global_position, mouse_final_pos)
 
 
 func test_ignores_click_outside():
+  var draggable = add_child_autofree(_get_draggable())
   draggable.position = Vector2.ZERO
 
   watch_signals(draggable)
-  sender.mouse_left_button_down(Vector2(30, 30)).hold_for(.01).wait("1f")
-  await (sender.idle)
+  _sender.mouse_left_button_down(Vector2(30, 30), Vector2(30, 30)).hold_for(.01).wait("1f")
+  await (_sender.idle)
   assert_signal_not_emitted(draggable, "mouse_down_detected")
+  assert_signal_not_emitted(draggable, "mouse_up_detected")

@@ -1,6 +1,6 @@
 @tool
 class_name PieceShape
-extends Node2D
+extends Draggable
 
 @export var size: Vector2 = Vector2.ZERO:
   get = get_size,
