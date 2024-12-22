@@ -12,15 +12,19 @@ var drag_offset = Vector2.ZERO:
 var _is_dragging = false
 
 
+func _input(event: InputEvent) -> void:
+  if event is InputEventMouseButton:
+    if event.button_index == MOUSE_BUTTON_LEFT && event.is_released() && _is_dragging:
+      mouse_up_detected.emit()
+      _is_dragging = false
+
+
 func _input_event(viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
   if event is InputEventMouseButton:
     if event.button_index == MOUSE_BUTTON_LEFT && event.is_pressed():
       mouse_down_detected.emit()
       viewport.set_input_as_handled()
       _is_dragging = true
-    elif event.button_index == MOUSE_BUTTON_LEFT && event.is_released():
-      mouse_up_detected.emit()
-      _is_dragging = false
 
 
 func _process(_delta):

@@ -141,3 +141,25 @@ func test_only_draggable_on_top_can_be_draggable():
   await (_sender.idle)
   assert_eq(draggable_1st.position, mouse_final_pos)
   assert_eq(draggable_2nd.position, Vector2.ZERO)
+
+
+func test_mouse_up_signal_is_always_emitted_after_mouse_down():
+  var draggable = add_child_autofree(_get_draggable())
+  var mouse_init_pos = Vector2(1, 1)
+  var mouse_move_to_pos = Vector2(20, 20)
+  var mouse_release_pos = Vector2(40, 40)
+  draggable.position = Vector2.ZERO
+  watch_signals(draggable)
+  (
+    _sender
+    . mouse_set_position(mouse_init_pos, mouse_init_pos)
+    . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+    . wait(.01)
+    . mouse_motion(mouse_move_to_pos, mouse_move_to_pos)
+    . wait(.01)
+    . mouse_left_button_up(mouse_release_pos, mouse_release_pos)
+    . wait_frames(1)
+  )  # this is shorter than other tests to keep mouse move event from firing
+  await (_sender.idle)
+  assert_eq(draggable.position, mouse_move_to_pos)
+  assert_signal_emitted(draggable, "mouse_up_detected")

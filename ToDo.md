@@ -37,7 +37,7 @@ DimpleShape
 Piece
 - [x] 画像が表示される
   - [x] /PieceShape/Spite
-- [ ] 指定した箇所で画像が切り分けられる
+- [x] 指定した箇所で画像が切り分けられる
   - [x] 画像が指摘できる
     - [x] texture
     - [x] nullになったときの処理
