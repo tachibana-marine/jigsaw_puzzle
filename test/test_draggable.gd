@@ -97,3 +97,47 @@ func test_ignores_click_outside():
   await (_sender.idle)
   assert_signal_not_emitted(draggable, "mouse_down_detected")
   assert_signal_not_emitted(draggable, "mouse_up_detected")
+
+
+func test_draggable_follows_cursor_with_offset():
+  var draggable = add_child_autofree(_get_draggable())
+  var mouse_init_pos = Vector2(1, 1)
+  var mouse_final_pos = Vector2(20, 20)
+  draggable.drag_offset = Vector2(10, 10)
+  draggable.position = Vector2.ZERO
+
+  (
+    _sender
+    . mouse_set_position(mouse_init_pos, mouse_init_pos)
+    . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+    . wait(.01)
+    . mouse_motion(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+    . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+  )
+  await (_sender.idle)
+  assert_eq(draggable.position, mouse_final_pos + draggable.drag_offset)
+
+
+func test_only_draggable_on_top_can_be_draggable():
+  var draggable_1st = add_child_autofree(_get_draggable())
+  var draggable_2nd = add_child_autofree(_get_draggable())
+  var mouse_init_pos = Vector2(1, 1)
+  var mouse_final_pos = Vector2(20, 20)
+  draggable_1st.position = Vector2.ZERO
+  draggable_2nd.position = Vector2.ZERO
+
+  (
+    _sender
+    . mouse_set_position(mouse_init_pos, mouse_init_pos)
+    . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+    . wait(.01)
+    . mouse_motion(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+    . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
+    . wait(.01)
+  )
+  await (_sender.idle)
+  assert_eq(draggable_1st.position, mouse_final_pos)
+  assert_eq(draggable_2nd.position, Vector2.ZERO)

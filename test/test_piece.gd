@@ -33,6 +33,7 @@ func test_piece_properties():
 
   piece.size = Vector2(20, 20)
   assert_eq(collision_shape.shape.size, Vector2(20, 20))
+  assert_eq(collision_shape.position, Vector2(10, 10))
   assert_eq(background.size, Vector2(40, 40))
   assert_eq(background.position, Vector2(-10, -10))
 

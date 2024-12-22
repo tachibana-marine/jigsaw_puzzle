@@ -22,6 +22,8 @@ func set_size(value):
   $Background.size = value * 2
   $Background.position = -size / 2
   $CollisionShape.shape.size = value
+  $CollisionShape.position = size / 2
+  drag_offset = -size / 2
 
 
 func _init():
