@@ -1,6 +1,6 @@
 @tool
 class_name PieceShape
-extends Draggable
+extends PuzzlePart
 
 @export var size: Vector2 = Vector2.ZERO:
   get = get_size,

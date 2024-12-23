@@ -159,7 +159,7 @@ func test_mouse_up_signal_is_always_emitted_after_mouse_down():
     . wait(.01)
     . mouse_left_button_up(mouse_release_pos, mouse_release_pos)
     . wait_frames(1)
-  )  # this is shorter than other tests to keep mouse move event from firing
+  )  # the wait is shorter than other tests to keep mouse move event from firing
   await (_sender.idle)
   assert_eq(draggable.position, mouse_move_to_pos)
   assert_signal_emitted(draggable, "mouse_up_detected")
