@@ -1,6 +1,5 @@
 extends GutTest
 
-var piece_script = load("res://src/piece.gd")
 var piece = null
 var sprite = null
 var background = null
@@ -12,7 +11,7 @@ func create_empty_image_texture(width: int, height: int):
 
 
 func before_each():
-  piece = autofree(piece_script.new())
+  piece = autofree(Piece.new())
   sprite = piece.get_node("Sprite")
   background = piece.get_node("Background")
 
