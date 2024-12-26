@@ -26,17 +26,6 @@ func set_size(value):
   drag_offset = -size / 2
 
 
-func get_pieces():
-  return [self]
-
-
-func connect_puzzle_part(puzzle_part: PuzzlePart):
-  var ret = CompositePuzzlePart.new()
-  ret.connect_puzzle_part(self)
-  ret.connect_puzzle_part(puzzle_part)
-  return ret
-
-
 func _init():
   self.clip_children = CanvasItem.ClipChildrenMode.CLIP_CHILDREN_ONLY
   var background = Rectangle.new()

@@ -36,6 +36,13 @@ func test_piece_properties():
   assert_eq(background.size, Vector2(40, 40))
   assert_eq(background.position, Vector2(-10, -10))
 
+
+func test_piece_can_connect_to_other_piece():
+  piece.size = Vector2(10, 10)
+  var piece2 = autofree(Piece.new())
+  piece2.size = Vector2(10, 10)
+  piece.connect_piece(0, piece2)
+
 # use this if you add null check to texture
 # func test_change_image_texture_to_null():
 #     var image_texture = create_empty_image_texture(1000, 1000)

@@ -31,11 +31,11 @@ func test_emits_signal_on_mouse_button_up_and_down():
   var draggable = add_child_autofree(_get_draggable())
   draggable.position = Vector2.ZERO
   watch_signals(draggable)
-  _sender.mouse_left_button_down(Vector2(1, 1)).wait(.01)
+  _sender.mouse_left_button_down(Vector2(1, 1), Vector2(1, 1)).wait(.2)
   await (_sender.idle)
   assert_signal_emit_count(draggable, "mouse_down_detected", 1)
   assert_signal_not_emitted(draggable, "mouse_up_detected")
-  _sender.mouse_left_button_up(Vector2(1, 1)).wait(.01)
+  _sender.mouse_left_button_up(Vector2(1, 1), Vector2(1, 1)).wait(.01)
   await (_sender.idle)
   assert_signal_emit_count(draggable, "mouse_up_detected", 1)
 
