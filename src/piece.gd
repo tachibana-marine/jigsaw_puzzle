@@ -2,6 +2,8 @@
 class_name Piece
 extends PieceShape
 
+signal piece_connected
+
 @export var texture: Texture2D = null:
   get:
     return texture
@@ -26,7 +28,21 @@ func set_size(value):
   drag_offset = -size / 2
 
 
+func connect_piece(piece: Piece):
+  print(self, piece)
+  piece_connected.emit(self, piece)
+
+
+func _on_drag_end():
+  for area in get_overlapping_areas():
+    var piece := area as Piece
+    if not piece:
+      continue
+    connect_piece(piece)
+
+
 func _init():
+  self.drag_end.connect(_on_drag_end)
   self.clip_children = CanvasItem.ClipChildrenMode.CLIP_CHILDREN_ONLY
   var background = Rectangle.new()
   background.color = Color.RED

@@ -33,11 +33,11 @@ func test_emits_signal_on_mouse_button_up_and_down():
   watch_signals(draggable)
   _sender.mouse_left_button_down(Vector2(1, 1), Vector2(1, 1)).wait(.2)
   await (_sender.idle)
-  assert_signal_emit_count(draggable, "mouse_down_detected", 1)
-  assert_signal_not_emitted(draggable, "mouse_up_detected")
+  assert_signal_emit_count(draggable, "drag_start", 1)
+  assert_signal_not_emitted(draggable, "drag_end")
   _sender.mouse_left_button_up(Vector2(1, 1), Vector2(1, 1)).wait(.01)
   await (_sender.idle)
-  assert_signal_emit_count(draggable, "mouse_up_detected", 1)
+  assert_signal_emit_count(draggable, "drag_end", 1)
 
 
 func test_draggable_can_be_dragged():
@@ -83,7 +83,7 @@ func test_draggable_works_in_global_space():
     . wait(.01)
   )
   await (_sender.idle)
-  assert_signal_emitted(draggable_child, "mouse_up_detected")
+  assert_signal_emitted(draggable_child, "drag_end")
   assert_eq(draggable_child.position, Vector2(30, 30))
   assert_eq(draggable_child.global_position, mouse_final_pos)
 
@@ -95,8 +95,8 @@ func test_ignores_click_outside():
   watch_signals(draggable)
   _sender.mouse_left_button_down(Vector2(30, 30), Vector2(30, 30)).hold_for(.01).wait("1f")
   await (_sender.idle)
-  assert_signal_not_emitted(draggable, "mouse_down_detected")
-  assert_signal_not_emitted(draggable, "mouse_up_detected")
+  assert_signal_not_emitted(draggable, "drag_start")
+  assert_signal_not_emitted(draggable, "drag_end")
 
 
 func test_draggable_follows_cursor_with_offset():
@@ -162,4 +162,4 @@ func test_mouse_up_signal_is_always_emitted_after_mouse_down():
   )  # the wait is shorter than other tests to keep mouse move event from firing
   await (_sender.idle)
   assert_eq(draggable.position, mouse_move_to_pos)
-  assert_signal_emitted(draggable, "mouse_up_detected")
+  assert_signal_emitted(draggable, "drag_end")

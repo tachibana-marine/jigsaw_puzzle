@@ -38,10 +38,42 @@ func test_piece_properties():
 
 
 func test_piece_can_connect_to_other_piece():
+  watch_signals(piece)
   piece.size = Vector2(10, 10)
   var piece2 = autofree(Piece.new())
   piece2.size = Vector2(10, 10)
-  piece.connect_piece(0, piece2)
+  piece.connect_piece(piece2)
+  assert_signal_emitted_with_parameters(piece, "piece_connected", [piece, piece2])
+
+
+class TestPieceInput:
+  extends GutTest
+
+  func should_skip_script():
+    if DisplayServer.get_name() == "headless":
+      return "Skip Input tests when running headless"
+
+  func test_piece_emits_signal_on_drop():
+    var piece = autofree(Piece.new())
+    piece.size = Vector2(10, 10)
+    piece.position = Vector2(0, 0)
+    var piece2 = autofree(Piece.new())
+    piece2.size = Vector2(10, 10)
+    piece2.position = Vector2(15, 15)
+    watch_signals(piece)
+    var sender = InputSender.new(piece)
+    (
+      sender
+      . mouse_set_position(Vector2(0, 0))
+      . mouse_left_button_down(Vector2(0, 0))
+      . wait(.01)
+      . mouse_relative_motion(Vector2(15, 15))
+      . wait(.01)
+      . mouse_left_button_down(Vector2(15, 15))
+      . wait(.01)
+    )
+    await (sender.idle)
+    assert_signal_emitted_with_parameters(piece, "piece_connected", [piece, piece2])
 
 # use this if you add null check to texture
 # func test_change_image_texture_to_null():
