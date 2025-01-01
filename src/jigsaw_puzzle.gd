@@ -2,6 +2,8 @@
 class_name JigsawPuzzle
 extends Node2D
 
+signal piece_connected
+
 @export var texture: Texture2D = null:
   get:
     return texture
@@ -46,6 +48,8 @@ var random_tools: RandomTools = RandomTools.new():
 
 var _pieces: Array[Piece] = []
 
+var _piece_chunks: Array[Array] = []
+
 
 func _init():
   var sprite = Sprite2D.new()
@@ -66,6 +70,10 @@ func _notification(what):
 
 func get_pieces():
   return _pieces
+
+
+func get_piece_chunks():
+  return _piece_chunks
 
 
 func _create_dimple(
@@ -161,3 +169,30 @@ func _reset_pieces():
       piece.dimple = _create_dimple(i, j, split_dimension.x, split_dimension.y)
       _pieces.append(piece)
       $PieceHolder.add_child(piece)
+      piece.piece_connected.connect(_on_piece_connected)
+      piece.drag_moved.connect(_on_piece_moved)
+
+
+func _on_piece_connected(piece1, piece2):
+  _piece_chunks.push_back([piece1, piece2])
+  piece_connected.emit()
+
+
+func _on_piece_moved(moved_piece, moved_position, mouse_pos):
+  for piece_chunk in _piece_chunks:
+    if moved_piece in piece_chunk:
+      for piece in piece_chunk:
+        if piece != moved_piece:
+          print(
+            (
+              "動いたやつ:"
+              + str(moved_piece.position)
+              + "届いたポジション"
+              + str(moved_position)
+              + ", くっついてるやつ"
+              + str(piece.position)
+              + ", マウス"
+              + str(mouse_pos)
+            )
+          )
+          piece.position = (mouse_pos + piece.drag_offset) + Vector2(50, 0)

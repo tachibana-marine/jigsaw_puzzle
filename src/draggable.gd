@@ -2,6 +2,7 @@ class_name Draggable
 extends Area2D
 
 signal drag_start
+signal drag_moved
 signal drag_end
 
 var drag_offset = Vector2.ZERO:
@@ -30,6 +31,7 @@ func _input_event(viewport: Viewport, event: InputEvent, _shape_idx: int) -> voi
 func _process(_delta):
   if _is_dragging:
     var mouse_pos = get_viewport().get_mouse_position()
+    drag_moved.emit(self, self.position, mouse_pos)
     global_position = mouse_pos + drag_offset
 
 

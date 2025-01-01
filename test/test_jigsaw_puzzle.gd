@@ -108,3 +108,78 @@ func test_dimple_ratio_correctly_scales_dimple_shape():
   jigsaw_puzzle.split_dimension = Vector2i(3, 3)
   jigsaw_puzzle.dimple_ratio = 30  # 30%
   assert_eq(jigsaw_puzzle.dimple_magnification * 40, 50 * 0.3)
+
+
+class TestJigsawPuzzle:
+  extends GutTest
+
+  var _sender = InputSender.new(Input)
+
+  func create_empty_image_texture(width: int, height: int):
+    var image = Image.create_empty(width, height, false, Image.FORMAT_RGB8)
+    return ImageTexture.create_from_image(image)
+
+  func before_each():
+    _sender.mouse_warp = true
+
+  func after_each():
+    _sender.release_all()
+    _sender.clear()
+
+  func should_skip_script():
+    if DisplayServer.get_name() == "headless":
+      return "Skip Input tests when running headless"
+
+  func test_listens_to_piece_connect():
+    var jigsaw_puzzle = add_child_autofree(JigsawPuzzle.new())
+    jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+    jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+    jigsaw_puzzle.margin = 20
+
+    var pieces = jigsaw_puzzle.get_pieces()
+    var mouse_init_pos = Vector2(0, 0)
+    # Drop the first piece on 5th piece. Remember the dimple_offset is 1/2 of the size.
+    var mouse_final_pos = Vector2(95, 95)
+    watch_signals(jigsaw_puzzle)
+    (
+      _sender
+      . mouse_set_position(mouse_init_pos)
+      . mouse_left_button_down(mouse_init_pos)
+      . wait(.1)
+      . mouse_motion(mouse_final_pos)
+      . wait(.1)
+      . mouse_left_button_up(mouse_final_pos)
+      . wait(.1)
+    )
+    await (_sender.idle)
+
+    assert_signal_emit_count(jigsaw_puzzle, "piece_connected", 1)
+    assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[4]]])
+
+  func test_connected_pieces_moves_as_one_chunk():
+    var jigsaw_puzzle = add_child_autofree(JigsawPuzzle.new())
+    jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+    jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+    var pieces = jigsaw_puzzle.get_pieces()
+    # connects the first and second piece.
+    jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+
+    var mouse_init_pos = Vector2(0, 0)
+    var mouse_final_pos = Vector2(-30, -30)
+
+    # move the connected pieces to the top left
+    watch_signals(jigsaw_puzzle)
+    (
+      _sender
+      . mouse_set_position(mouse_init_pos)
+      . mouse_left_button_down(mouse_init_pos)
+      . wait(.1)
+      . mouse_motion(mouse_final_pos)
+      . wait(.1)
+      . mouse_left_button_up(mouse_final_pos)
+      . wait(.1)
+    )
+    await (_sender.idle)
+
+    assert_eq(pieces[0].position, Vector2(-55, -55))
+    assert_eq(pieces[1].position, Vector2(-5, -55))
