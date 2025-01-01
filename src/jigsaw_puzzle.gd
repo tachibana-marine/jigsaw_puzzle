@@ -51,6 +51,13 @@ var _pieces: Array[Piece] = []
 var _piece_chunks: Array[Array] = []
 
 
+func shuffle(min_pos: int, max_pos: int):
+  for piece in _pieces:
+    piece.position = Vector2(
+      random_tools.a_randi_range(min_pos, max_pos), random_tools.a_randi_range(min_pos, max_pos)
+    )
+
+
 func _init():
   var sprite = Sprite2D.new()
   sprite.name = "Sprite"

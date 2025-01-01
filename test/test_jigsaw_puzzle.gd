@@ -40,6 +40,17 @@ func test_can_change_texture_to_null():
   assert_eq(pieces.size(), 0)
 
 
+func test_shuffle_randomly_changes_piece_position():
+  jigsaw_puzzle.texture = create_empty_image_texture(100, 100)
+  jigsaw_puzzle.split_dimension = Vector2i(2, 2)
+  jigsaw_puzzle.shuffle(0, 100)
+  var pieces = jigsaw_puzzle.get_pieces()
+  assert_ne(pieces[0].position, Vector2(0, 0))
+  assert_ne(pieces[1].position, Vector2(50, 0))
+  assert_ne(pieces[2].position, Vector2(0, 50))
+  assert_ne(pieces[3].position, Vector2(50, 50))
+
+
 func test_edge_dimples_do_not_exist():
   jigsaw_puzzle.texture = create_empty_image_texture(400, 400)
   jigsaw_puzzle.split_dimension = Vector2i(3, 3)
