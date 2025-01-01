@@ -3,4 +3,4 @@ extends GutHookScript
 
 func run():
   pass
-#  Node.print_orphan_nodes()
+  # Node.print_orphan_nodes()

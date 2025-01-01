@@ -1,3 +1,4 @@
+# Gut leaks if the file name is test_piece.gd somehow.
 extends GutTest
 
 var piece = null
@@ -49,30 +50,44 @@ func test_piece_can_connect_to_other_piece():
 class TestPieceInput:
   extends GutTest
 
+  var _sender = InputSender.new(Input)
+
+  func before_each():
+    _sender.mouse_warp = true
+
+  func after_each():
+    _sender.release_all()
+    _sender.clear()
+
   func should_skip_script():
     if DisplayServer.get_name() == "headless":
       return "Skip Input tests when running headless"
 
-  func test_piece_emits_signal_on_drop():
-    var piece = autofree(Piece.new())
-    piece.size = Vector2(10, 10)
+  func test_piece_connects_on_drop():
+    # this test fails if the piece size is smaller. IDK why.
+    var piece = add_child_autofree(Piece.new())
+    piece.size = Vector2(20, 20)
     piece.position = Vector2(0, 0)
-    var piece2 = autofree(Piece.new())
-    piece2.size = Vector2(10, 10)
-    piece2.position = Vector2(15, 15)
+    var piece2 = add_child_autofree(Piece.new())
+    piece2.size = Vector2(20, 20)
+    piece2.position = Vector2(20, 20)
+
+    var mouse_init_pos = Vector2(0, 0)
+    var mouse_final_pos = Vector2(20, 20)
     watch_signals(piece)
-    var sender = InputSender.new(piece)
     (
-      sender
-      . mouse_set_position(Vector2(0, 0))
-      . mouse_left_button_down(Vector2(0, 0))
-      . wait(.01)
-      . mouse_relative_motion(Vector2(15, 15))
-      . wait(.01)
-      . mouse_left_button_down(Vector2(15, 15))
-      . wait(.01)
+      _sender
+      . mouse_set_position(mouse_init_pos)
+      . mouse_left_button_down(mouse_init_pos)
+      . wait(.1)
+      . mouse_motion(mouse_final_pos)
+      . wait(.1)
+      . mouse_left_button_up(mouse_final_pos)
+      . wait(.1)
     )
-    await (sender.idle)
+    await (_sender.idle)
+    # Drag Offset of the piece is 10
+    assert_eq(piece.position, Vector2(10, 10))
     assert_signal_emitted_with_parameters(piece, "piece_connected", [piece, piece2])
 
 # use this if you add null check to texture
