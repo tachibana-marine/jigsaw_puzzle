@@ -31,7 +31,7 @@ func _input_event(viewport: Viewport, event: InputEvent, _shape_idx: int) -> voi
 func _process(_delta):
   if _is_dragging:
     var mouse_pos = get_viewport().get_mouse_position()
-    drag_moved.emit(self, self.position, mouse_pos)
+    drag_moved.emit(self, mouse_pos)
     global_position = mouse_pos + drag_offset
 
 

@@ -173,26 +173,65 @@ func _reset_pieces():
       piece.drag_moved.connect(_on_piece_moved)
 
 
+func _get_piece_pos_in_pazzle(piece):
+  var index_piece = _pieces.find(piece)
+  return Vector2i(index_piece % split_dimension.x, int(index_piece / float(split_dimension.x)))
+
+
+func _is_piece_adjacent(piece1, piece2):
+  var pos_piece1 = _get_piece_pos_in_pazzle(piece1)
+  var pos_piece2 = _get_piece_pos_in_pazzle(piece2)
+  return (pos_piece1 - pos_piece2).length() == 1
+
+
+func _find_chunk_index_by_piece(piece):
+  var index = 0
+  for piece_chunk in _piece_chunks:
+    if piece in piece_chunk:
+      return index
+    index += 1
+  return -1
+
+
 func _on_piece_connected(piece1, piece2):
+  if not _is_piece_adjacent(piece1, piece2):
+    return
+  var chunk_index_piece1 = _find_chunk_index_by_piece(piece1)
+  var chunk_index_piece2 = _find_chunk_index_by_piece(piece2)
+  if chunk_index_piece1 == -1 and chunk_index_piece2 >= 0:
+    # piece 1 is not in chunk
+    _piece_chunks[chunk_index_piece2].push_back(piece1)
+    return
+  if chunk_index_piece1 >= 0 and chunk_index_piece2 == -1:
+    # piece 2 is not in chunk
+    _piece_chunks[chunk_index_piece1].push_back(piece2)
+    return
+  if chunk_index_piece1 == chunk_index_piece2 and chunk_index_piece2 >= 0:
+    # both pieces are in the same chunk: do nothing
+    return
+  if chunk_index_piece1 >= 0 and chunk_index_piece2 >= 0:
+    var tmp_chunk1 = _piece_chunks[chunk_index_piece1]
+    var tmp_chunk2 = _piece_chunks[chunk_index_piece2]
+    var tmp_chunk = tmp_chunk1
+    # TODO: come up with better way to handle array manipulation
+    tmp_chunk.append_array(_piece_chunks[chunk_index_piece2])
+    _piece_chunks.erase(tmp_chunk1)
+    _piece_chunks.erase(tmp_chunk2)
+    _piece_chunks.push_back(tmp_chunk)
+    return
+
+  # both pieces are not in the chunks
   _piece_chunks.push_back([piece1, piece2])
   piece_connected.emit()
 
 
-func _on_piece_moved(moved_piece, moved_position, mouse_pos):
+func _on_piece_moved(moved_piece, mouse_pos):
+  var pos_moved_piece = _get_piece_pos_in_pazzle(moved_piece)
   for piece_chunk in _piece_chunks:
     if moved_piece in piece_chunk:
       for piece in piece_chunk:
         if piece != moved_piece:
-          print(
-            (
-              "動いたやつ:"
-              + str(moved_piece.position)
-              + "届いたポジション"
-              + str(moved_position)
-              + ", くっついてるやつ"
-              + str(piece.position)
-              + ", マウス"
-              + str(mouse_pos)
-            )
+          var pos_piece = _get_piece_pos_in_pazzle(piece)
+          piece.position = (
+            (mouse_pos + piece.drag_offset) + Vector2(pos_piece - pos_moved_piece) * piece.size
           )
-          piece.position = (mouse_pos + piece.drag_offset) + Vector2(50, 0)

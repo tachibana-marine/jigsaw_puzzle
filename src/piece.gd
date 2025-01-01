@@ -29,7 +29,6 @@ func set_size(value):
 
 
 func connect_piece(piece: Piece):
-  print(self, piece)
   piece_connected.emit(self, piece)
 
 

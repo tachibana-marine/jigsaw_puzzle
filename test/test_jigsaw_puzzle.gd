@@ -110,8 +110,61 @@ func test_dimple_ratio_correctly_scales_dimple_shape():
   assert_eq(jigsaw_puzzle.dimple_magnification * 40, 50 * 0.3)
 
 
+func test_pieces_dont_connect_to_a_non_adjacent_piece():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var pieces = jigsaw_puzzle.get_pieces()
+  # connects the first and fifth piece.
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[4])
+  assert_eq(jigsaw_puzzle.get_piece_chunks(), [])
+
+
+func test_connected_pieces_wont_connect_again():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var pieces = jigsaw_puzzle.get_pieces()
+  # connects the first and second piece.
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  # connects the first and second again.
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[1]]])
+
+
+func test_a_piece_connects_to_a_chunk():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var pieces = jigsaw_puzzle.get_pieces()
+  # connects the first and second piece.
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  # connects the first and fourth piece (chunk on piece)
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[3])
+  # connects the second and third piece (piece on chunk)
+  jigsaw_puzzle._on_piece_connected(pieces[2], pieces[1])
+
+  assert_eq(jigsaw_puzzle.get_piece_chunks().size(), 1)
+  assert_eq(jigsaw_puzzle.get_piece_chunks()[0].size(), 4)
+  assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[1], pieces[3], pieces[2]]])
+
+
+func test_chunk_merges():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var pieces = jigsaw_puzzle.get_pieces()
+  # connects the first and second piece.
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  # connects the third and fourth piece
+  jigsaw_puzzle._on_piece_connected(pieces[2], pieces[5])
+  # connects a piece in chunk with a piece in chunk
+  jigsaw_puzzle._on_piece_connected(pieces[1], pieces[2])
+
+  assert_eq(jigsaw_puzzle.get_piece_chunks().size(), 1)
+  assert_eq(jigsaw_puzzle.get_piece_chunks()[0].size(), 4)
+  assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[1], pieces[2], pieces[5]]])
+
+
 class TestJigsawPuzzle:
   extends GutTest
+  # Might as well move this to Integration test
 
   var _sender = InputSender.new(Input)
 
@@ -138,8 +191,8 @@ class TestJigsawPuzzle:
 
     var pieces = jigsaw_puzzle.get_pieces()
     var mouse_init_pos = Vector2(0, 0)
-    # Drop the first piece on 5th piece. Remember the dimple_offset is 1/2 of the size.
-    var mouse_final_pos = Vector2(95, 95)
+    # Drop the first piece on 4th piece. Remember the dimple_offset is 1/2 of the size.
+    var mouse_final_pos = Vector2(25, 95)
     watch_signals(jigsaw_puzzle)
     (
       _sender
@@ -154,7 +207,7 @@ class TestJigsawPuzzle:
     await (_sender.idle)
 
     assert_signal_emit_count(jigsaw_puzzle, "piece_connected", 1)
-    assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[4]]])
+    assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[3]]])
 
   func test_connected_pieces_moves_as_one_chunk():
     var jigsaw_puzzle = add_child_autofree(JigsawPuzzle.new())
