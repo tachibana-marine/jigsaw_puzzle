@@ -121,6 +121,20 @@ func test_dimple_ratio_correctly_scales_dimple_shape():
   assert_eq(jigsaw_puzzle.dimple_magnification * 40, 50 * 0.3)
 
 
+func test_connected_pieces_adjust_position_automatically():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  jigsaw_puzzle.margin = 20
+  var pieces = jigsaw_puzzle.get_pieces()
+  # connects the first and the second piece.
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  assert_eq(pieces[0].position, Vector2(20, 0))
+  # connecting a piece to a chunck moves the chunck to the piece
+  jigsaw_puzzle._on_piece_connected(pieces[1], pieces[2])
+  # the third piece is at (140,0) so the first piece is moved to (40,0)
+  assert_eq(pieces[0].position, Vector2(40, 0))
+
+
 func test_pieces_dont_connect_to_a_non_adjacent_piece():
   jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
   jigsaw_puzzle.split_dimension = Vector2i(3, 3)

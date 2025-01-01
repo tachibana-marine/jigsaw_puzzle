@@ -200,11 +200,36 @@ func _find_chunk_index_by_piece(piece):
   return -1
 
 
+# adjust position of piece1 relative to piece2
+func _adjust_pieces_position(piece1, piece2):
+  var pos_piece1 = _get_piece_pos_in_pazzle(piece1)
+  var pos_piece2 = _get_piece_pos_in_pazzle(piece2)
+  piece1.position = piece2.position + Vector2(pos_piece1 - pos_piece2) * piece1.size
+
+
+# adjust position of piece1 and all the pieces in the same chunk relative to piece2
+func _adjust_pieces_position_in_chunks(piece1, piece2):
+  var chunk_index_piece1 = _find_chunk_index_by_piece(piece1)
+  if chunk_index_piece1 == -1:
+    _adjust_pieces_position(piece1, piece2)
+  else:
+    for piece in _piece_chunks[chunk_index_piece1]:
+      _adjust_pieces_position(piece, piece2)
+
+
 func _on_piece_connected(piece1, piece2):
   if not _is_piece_adjacent(piece1, piece2):
     return
   var chunk_index_piece1 = _find_chunk_index_by_piece(piece1)
   var chunk_index_piece2 = _find_chunk_index_by_piece(piece2)
+  if chunk_index_piece1 == chunk_index_piece2 and chunk_index_piece2 >= 0:
+    # both pieces are in the same chunk: do nothing
+    return
+
+  _adjust_pieces_position_in_chunks(piece1, piece2)
+  # _adjust_pieces_position(piece1, piece2)
+
+  piece_connected.emit()
   if chunk_index_piece1 == -1 and chunk_index_piece2 >= 0:
     # piece 1 is not in chunk
     _piece_chunks[chunk_index_piece2].push_back(piece1)
@@ -212,9 +237,6 @@ func _on_piece_connected(piece1, piece2):
   if chunk_index_piece1 >= 0 and chunk_index_piece2 == -1:
     # piece 2 is not in chunk
     _piece_chunks[chunk_index_piece1].push_back(piece2)
-    return
-  if chunk_index_piece1 == chunk_index_piece2 and chunk_index_piece2 >= 0:
-    # both pieces are in the same chunk: do nothing
     return
   if chunk_index_piece1 >= 0 and chunk_index_piece2 >= 0:
     var tmp_chunk1 = _piece_chunks[chunk_index_piece1]
@@ -229,7 +251,6 @@ func _on_piece_connected(piece1, piece2):
 
   # both pieces are not in the chunks
   _piece_chunks.push_back([piece1, piece2])
-  piece_connected.emit()
 
 
 func _on_piece_moved(moved_piece, mouse_pos):

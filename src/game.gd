@@ -8,5 +8,5 @@ func _process(_delta: float) -> void:
 
 
 func _ready() -> void:
-  pass
-  # $JigsawPuzzle.shuffle(0, 500)
+  # pass
+  $JigsawPuzzle.shuffle(0, 500)
