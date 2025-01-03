@@ -217,8 +217,30 @@ func _adjust_pieces_position_in_chunks(piece1, piece2):
       _adjust_pieces_position(piece, piece2)
 
 
-func _on_piece_connected(piece1, piece2):
+func _can_piece_connect_each_other(piece1, piece2):
   if not _is_piece_adjacent(piece1, piece2):
+    return false
+  # Check if piece1 is on the correct side of piece2
+  # There's a note on how I came up with this algorithm somewhere in my diary.
+  var piece1_pos = _get_piece_pos_in_pazzle(piece1)
+  var piece2_pos = _get_piece_pos_in_pazzle(piece2)
+  var piece_pos_vector = Vector2(piece1_pos - piece2_pos)
+  var global_pos_vector = piece1.position - piece2.position
+  piece_pos_vector = piece_pos_vector.normalized()
+  global_pos_vector = global_pos_vector.normalized()
+  var pos_similarity = piece_pos_vector.dot(global_pos_vector)
+  # allow 80% similarity
+  if pos_similarity < 0.8:
+    return false
+
+  # Check if the pieces being too close or not
+  var too_close_rect = Rect2(Vector2.ZERO, piece1.size * 0.8)
+  print("hohoho ", global_pos_vector, too_close_rect)
+  return not too_close_rect.has_point((piece1.position - piece2.position).abs())
+
+
+func _on_piece_connected(piece1, piece2):
+  if not _can_piece_connect_each_other(piece1, piece2):
     return
   var chunk_index_piece1 = _find_chunk_index_by_piece(piece1)
   var chunk_index_piece2 = _find_chunk_index_by_piece(piece2)
@@ -253,7 +275,7 @@ func _on_piece_connected(piece1, piece2):
   _piece_chunks.push_back([piece1, piece2])
 
 
-func _on_piece_moved(moved_piece, _relative_movement):
+func _on_piece_moved(moved_piece):
   var pos_moved_piece = _get_piece_pos_in_pazzle(moved_piece)
   for piece_chunk in _piece_chunks:
     if moved_piece in piece_chunk:
@@ -261,7 +283,5 @@ func _on_piece_moved(moved_piece, _relative_movement):
         if piece != moved_piece:
           var pos_piece = _get_piece_pos_in_pazzle(piece)
           piece.position = (
-            moved_piece.position
-            + _relative_movement
-            + Vector2(pos_piece - pos_moved_piece) * piece.size
+            moved_piece.position + Vector2(pos_piece - pos_moved_piece) * piece.size
           )

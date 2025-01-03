@@ -23,7 +23,6 @@ func _input(event: InputEvent) -> void:
   if event is InputEventMouseMotion:
     if _is_dragging:
       _movement = event.relative
-      drag_moved.emit(self, _movement)
 
 
 func _input_event(viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
@@ -36,12 +35,10 @@ func _input_event(viewport: Viewport, event: InputEvent, _shape_idx: int) -> voi
 
 func _process(_delta):
   # I read that positions should be updated in _process somewhere
-  if _is_dragging:
-    print(position)
   if _movement != Vector2.ZERO:
     position = position + _movement
-    print("I'm ", self, " who was moved to ", position, " moved by ", _movement)
     _movement = Vector2.ZERO
+    drag_moved.emit(self)
   # if _is_dragging:
   #   var mouse_pos = get_viewport().get_mouse_position()
   #   drag_moved.emit(self, mouse_pos)

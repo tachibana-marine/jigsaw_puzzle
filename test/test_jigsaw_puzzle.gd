@@ -144,6 +144,32 @@ func test_pieces_dont_connect_to_a_non_adjacent_piece():
   assert_eq(jigsaw_puzzle.get_piece_chunks(), [])
 
 
+func test_pieces_dont_connect_to_piece_in_wrong_side():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var pieces = jigsaw_puzzle.get_pieces()
+  # move a piece to the wrong side, then try to connect the first and second pieces
+  pieces[0].position = Vector2(80, 0)
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  pieces[0].position = Vector2(50, -30)
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  pieces[0].position = Vector2(80, 0)
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+
+  assert_eq(jigsaw_puzzle.get_piece_chunks(), [])
+
+
+func test_pieces_dont_connect_to_a_piece_if_its_too_close():
+  jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+  jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+  var pieces = jigsaw_puzzle.get_pieces()
+  # move first piece too close to the second piece then try to connect them
+  # the threshold is 20% of the piece size inclusive
+  pieces[0].position = Vector2(31, 0)
+  jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+  assert_eq(jigsaw_puzzle.get_piece_chunks(), [])
+
+
 func test_connected_pieces_wont_connect_again():
   jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
   jigsaw_puzzle.split_dimension = Vector2i(3, 3)
@@ -217,7 +243,7 @@ class TestJigsawPuzzle:
     var pieces = jigsaw_puzzle.get_pieces()
     var mouse_init_pos = Vector2(0, 0)
     # Drop the first piece on 4th piece.
-    var mouse_final_pos = Vector2(0, 50)
+    var mouse_final_pos = Vector2(0, 30)
     watch_signals(jigsaw_puzzle)
     (
       _sender
