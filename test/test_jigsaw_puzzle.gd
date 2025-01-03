@@ -216,8 +216,8 @@ class TestJigsawPuzzle:
 
     var pieces = jigsaw_puzzle.get_pieces()
     var mouse_init_pos = Vector2(0, 0)
-    # Drop the first piece on 4th piece. Remember the dimple_offset is 1/2 of the size.
-    var mouse_final_pos = Vector2(25, 95)
+    # Drop the first piece on 4th piece.
+    var mouse_final_pos = Vector2(0, 50)
     watch_signals(jigsaw_puzzle)
     (
       _sender
@@ -234,18 +234,16 @@ class TestJigsawPuzzle:
     assert_signal_emit_count(jigsaw_puzzle, "piece_connected", 1)
     assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[3]]])
 
-  func test_connected_pieces_moves_as_one_chunk():
+  func test_a_whole_chunk_can_be_dragged():
     var jigsaw_puzzle = add_child_autofree(JigsawPuzzle.new())
     jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
     jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+    jigsaw_puzzle.margin = 20
     var pieces = jigsaw_puzzle.get_pieces()
-    # connects the first and second piece.
     jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
 
-    var mouse_init_pos = Vector2(0, 0)
-    var mouse_final_pos = Vector2(-30, -30)
-
-    # move the connected pieces to the top left
+    var mouse_init_pos = Vector2(20, 0)  # the first piece snaps to the second one
+    var mouse_final_pos = Vector2(0, 0)  # drag the first piece to the left by 20 px
     watch_signals(jigsaw_puzzle)
     (
       _sender
@@ -259,5 +257,6 @@ class TestJigsawPuzzle:
     )
     await (_sender.idle)
 
-    assert_eq(pieces[0].position, Vector2(-55, -55))
-    assert_eq(pieces[1].position, Vector2(-5, -55))
+    assert_eq(pieces[0].position, Vector2.ZERO)
+    assert_eq(pieces[1].position, Vector2(50, 0))
+    assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[1]]])

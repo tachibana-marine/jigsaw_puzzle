@@ -253,7 +253,7 @@ func _on_piece_connected(piece1, piece2):
   _piece_chunks.push_back([piece1, piece2])
 
 
-func _on_piece_moved(moved_piece, mouse_pos):
+func _on_piece_moved(moved_piece, _relative_movement):
   var pos_moved_piece = _get_piece_pos_in_pazzle(moved_piece)
   for piece_chunk in _piece_chunks:
     if moved_piece in piece_chunk:
@@ -261,5 +261,7 @@ func _on_piece_moved(moved_piece, mouse_pos):
         if piece != moved_piece:
           var pos_piece = _get_piece_pos_in_pazzle(piece)
           piece.position = (
-            (mouse_pos + piece.drag_offset) + Vector2(pos_piece - pos_moved_piece) * piece.size
+            moved_piece.position
+            + _relative_movement
+            + Vector2(pos_piece - pos_moved_piece) * piece.size
           )

@@ -23,7 +23,7 @@ func set_size(value):
   super.set_size(value)
   $Background.size = value * 2
   $Background.position = -size / 2
-  $CollisionShape.shape.size = value
+  $CollisionShape.shape.size = value * 1.2
   $CollisionShape.position = size / 2
   drag_offset = -size / 2
 
@@ -55,7 +55,6 @@ func _init():
 
   var collision = CollisionShape2D.new()
   var rectangle = RectangleShape2D.new()
-  rectangle.size = size
   collision.shape = rectangle
   collision.name = "CollisionShape"
   add_child(collision)

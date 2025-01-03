@@ -35,57 +35,46 @@ func test_emits_signal_on_mouse_button_up_and_down():
   await (_sender.idle)
   assert_signal_emit_count(draggable, "drag_start", 1)
   assert_signal_not_emitted(draggable, "drag_end")
-  _sender.mouse_left_button_up(Vector2(1, 1), Vector2(1, 1)).wait(.01)
+  _sender.mouse_left_button_up(Vector2(1, 1), Vector2(1, 1)).wait(.1)
   await (_sender.idle)
   assert_signal_emit_count(draggable, "drag_end", 1)
 
 
-func test_draggable_can_be_dragged():
+func test_draggable_doesnt_move_on_click():
   var draggable = add_child_autofree(_get_draggable())
   var mouse_init_pos = Vector2(1, 1)
-  var mouse_final_pos = Vector2(20, 20)
   draggable.position = Vector2.ZERO
 
   (
     _sender
     . mouse_set_position(mouse_init_pos, mouse_init_pos)
     . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
-    . wait(.01)
-    . mouse_motion(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
-    . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
+    . hold_for(.1)
   )
   await (_sender.idle)
-  assert_eq(draggable.position, mouse_final_pos)
+  assert_eq(draggable.position, Vector2.ZERO)
 
 
-func test_draggable_works_in_global_space():
-  var parent = Node2D.new()
-  parent.position = Vector2(20, 20)
-  var draggable_child = _get_draggable()
-  parent.add_child(draggable_child)
-  watch_signals(draggable_child)
-  add_child_autofree(parent)
-
-  draggable_child.position = Vector2(10, 10)  # (30,30) in global space
-  var mouse_init_pos = Vector2(31, 31)
-  var mouse_final_pos = Vector2(50, 50)
+func test_draggable_can_be_dragged_by_mouse_relative_position_change():
+  var draggable = add_child_autofree(_get_draggable())
+  var mouse_init_pos = Vector2(1, 1)
+  var mouse_final_pos = Vector2(20, 20)
+  draggable.position = Vector2.ZERO
+  watch_signals(draggable)
 
   (
     _sender
     . mouse_set_position(mouse_init_pos, mouse_init_pos)
     . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
-    . wait(.01)
+    . wait(.1)
     . mouse_motion(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
+    . wait(.1)
     . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
+    . wait(.1)
   )
   await (_sender.idle)
-  assert_signal_emitted(draggable_child, "drag_end")
-  assert_eq(draggable_child.position, Vector2(30, 30))
-  assert_eq(draggable_child.global_position, mouse_final_pos)
+  assert_signal_emitted(draggable, "drag_moved")
+  assert_eq(draggable.position, mouse_final_pos - mouse_init_pos)
 
 
 func test_ignores_click_outside():
@@ -93,31 +82,60 @@ func test_ignores_click_outside():
   draggable.position = Vector2.ZERO
 
   watch_signals(draggable)
-  _sender.mouse_left_button_down(Vector2(30, 30), Vector2(30, 30)).hold_for(.01).wait("1f")
+  _sender.mouse_left_button_down(Vector2(30, 30), Vector2(30, 30)).hold_for(.1).wait("1f")
   await (_sender.idle)
   assert_signal_not_emitted(draggable, "drag_start")
   assert_signal_not_emitted(draggable, "drag_end")
 
 
-func test_draggable_follows_cursor_with_offset():
-  var draggable = add_child_autofree(_get_draggable())
-  var mouse_init_pos = Vector2(1, 1)
-  var mouse_final_pos = Vector2(20, 20)
-  draggable.drag_offset = Vector2(10, 10)
-  draggable.position = Vector2.ZERO
+# Following tests are not relevant.
+# Commeting out for now, but subject to deletion in the future.
+# func test_draggable_works_in_global_space():
+#   var parent = Node2D.new()
+#   parent.position = Vector2(20, 20)
+#   var draggable_child = _get_draggable()
+#   parent.add_child(draggable_child)
+#   watch_signals(draggable_child)
+#   add_child_autofree(parent)
 
-  (
-    _sender
-    . mouse_set_position(mouse_init_pos, mouse_init_pos)
-    . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
-    . wait(.01)
-    . mouse_motion(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
-    . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
-  )
-  await (_sender.idle)
-  assert_eq(draggable.position, mouse_final_pos + draggable.drag_offset)
+#   draggable_child.position = Vector2(10, 10)  # (30,30) in global space
+#   var mouse_init_pos = Vector2(31, 31)
+#   var mouse_final_pos = Vector2(50, 50)
+
+#   (
+#     _sender
+#     . mouse_set_position(mouse_init_pos, mouse_init_pos)
+#     . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+#     . wait(.1)
+#     . mouse_motion(mouse_final_pos, mouse_final_pos)
+#     . wait(.1)
+#     . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
+#     . wait(.1)
+#   )
+#   await (_sender.idle)
+#   assert_signal_emitted(draggable_child, "drag_end")
+#   assert_eq(draggable_child.position, Vector2(30, 30))
+#   assert_eq(draggable_child.global_position, mouse_final_pos)
+
+# func test_draggable_follows_cursor_with_offset():
+#   var draggable = add_child_autofree(_get_draggable())
+#   var mouse_init_pos = Vector2(1, 1)
+#   var mouse_final_pos = Vector2(20, 20)
+#   draggable.drag_offset = Vector2(10, 10)
+#   draggable.position = Vector2.ZERO
+
+#   (
+#     _sender
+#     . mouse_set_position(mouse_init_pos, mouse_init_pos)
+#     . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
+#     . wait(.1)
+#     . mouse_motion(mouse_final_pos, mouse_final_pos)
+#     . wait(.1)
+#     . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
+#     . wait(.1)
+#   )
+#   await (_sender.idle)
+#   assert_eq(draggable.position, mouse_final_pos + draggable.drag_offset)
 
 
 func test_only_draggable_on_top_can_be_draggable():
@@ -127,19 +145,22 @@ func test_only_draggable_on_top_can_be_draggable():
   var mouse_final_pos = Vector2(20, 20)
   draggable_1st.position = Vector2.ZERO
   draggable_2nd.position = Vector2.ZERO
-
+  watch_signals(draggable_1st)
+  watch_signals(draggable_2nd)
   (
     _sender
     . mouse_set_position(mouse_init_pos, mouse_init_pos)
     . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
-    . wait(.01)
+    . wait(.1)
     . mouse_motion(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
+    . wait(.1)
     . mouse_left_button_up(mouse_final_pos, mouse_final_pos)
-    . wait(.01)
+    . wait(.1)
   )
   await (_sender.idle)
-  assert_eq(draggable_1st.position, mouse_final_pos)
+  assert_signal_emitted(draggable_1st, "drag_start")
+  assert_signal_not_emitted(draggable_2nd, "drag_start")
+  assert_eq(draggable_1st.position, mouse_final_pos - mouse_init_pos)
   assert_eq(draggable_2nd.position, Vector2.ZERO)
 
 
@@ -154,12 +175,12 @@ func test_mouse_up_signal_is_always_emitted_after_mouse_down():
     _sender
     . mouse_set_position(mouse_init_pos, mouse_init_pos)
     . mouse_left_button_down(mouse_init_pos, mouse_init_pos)
-    . wait(.01)
+    . wait(.1)
     . mouse_motion(mouse_move_to_pos, mouse_move_to_pos)
-    . wait(.01)
+    . wait(.1)
     . mouse_left_button_up(mouse_release_pos, mouse_release_pos)
     . wait_frames(1)
   )  # the wait is shorter than other tests to keep mouse move event from firing
   await (_sender.idle)
-  assert_eq(draggable.position, mouse_move_to_pos)
+  assert_eq(draggable.position, mouse_move_to_pos - mouse_init_pos)
   assert_signal_emitted(draggable, "drag_end")

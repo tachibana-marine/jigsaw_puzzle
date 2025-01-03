@@ -21,7 +21,8 @@ func test_piece_properties():
   var image_texture = create_empty_image_texture(1000, 1000)
   piece.size = Vector2(10, 10)
   var collision_shape = piece.get_node("CollisionShape")
-  assert_eq(collision_shape.shape.size, Vector2(10, 10))
+  # collision shape is larger than the piece itself by 20%
+  assert_eq(collision_shape.shape.size, Vector2(12, 12))
   # background covers twice as large area as the piece_shape
   # so that the dimples can be covered
   assert_eq(background.size, Vector2(20, 20))
@@ -32,7 +33,7 @@ func test_piece_properties():
   assert_eq(sprite.offset, Vector2(-3, -5))
 
   piece.size = Vector2(20, 20)
-  assert_eq(collision_shape.shape.size, Vector2(20, 20))
+  assert_eq(collision_shape.shape.size, Vector2(24, 24))
   assert_eq(collision_shape.position, Vector2(10, 10))
   assert_eq(background.size, Vector2(40, 40))
   assert_eq(background.position, Vector2(-10, -10))
@@ -74,20 +75,21 @@ class TestPieceInput:
 
     var mouse_init_pos = Vector2(0, 0)
     var mouse_final_pos = Vector2(20, 20)
+    # the wait is a bit larger than other tests
+    # since it fails if run from Godot GUI
     watch_signals(piece)
     (
       _sender
       . mouse_set_position(mouse_init_pos)
       . mouse_left_button_down(mouse_init_pos)
-      . wait(.1)
+      . wait(.2)
       . mouse_motion(mouse_final_pos)
-      . wait(.1)
+      . wait(.2)
       . mouse_left_button_up(mouse_final_pos)
-      . wait(.1)
+      . wait(.2)
     )
     await (_sender.idle)
-    # Drag Offset of the piece is 10
-    assert_eq(piece.position, Vector2(10, 10))
+    assert_eq(piece.position, Vector2(20, 20))
     assert_signal_emitted_with_parameters(piece, "piece_connected", [piece, piece2])
 
 # use this if you add null check to texture
