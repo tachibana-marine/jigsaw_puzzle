@@ -246,20 +246,22 @@ func _can_piece_connect_each_other(piece1, piece2):
 
 
 func _on_piece_clicked(piece):
-  var chunk = _find_chunk_index_by_piece(piece)
-  # var chunk=null
+  # move the clicked chunk on top of the puzzle
+  var chunk_index = _find_chunk_index_by_piece(piece)
+  var chunk = null
   var tree = get_piece_tree()
-  if chunk == -1:
-    for i in range(tree.size()):
+  if chunk_index != -1:
+    chunk = _piece_chunks[chunk_index]
+  for i in range(tree.size()):
+    if not chunk:
       if piece != tree[i]:
         $PieceHolder.move_child(piece, i)
       $PieceHolder.move_child(piece, -1)
-  else:
-    for i in range(tree.size()):
-      if tree[i] not in _piece_chunks[chunk]:
+    else:
+      if tree[i] not in chunk:
         $PieceHolder.move_child(tree[i], i)
-    for chunk_piece in _piece_chunks[chunk]:
-      $PieceHolder.move_child(chunk_piece, -1)
+      for chunk_piece in chunk:
+        $PieceHolder.move_child(chunk_piece, -1)
 
 
 func _on_piece_connected(piece1, piece2):

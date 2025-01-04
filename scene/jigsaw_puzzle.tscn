@@ -21,3 +21,10 @@ texture = ExtResource("3_ertd7")
 split_dimension = Vector2i(4, 6)
 margin = 40
 dimple_ratio = 30.0
+
+[node name="Label" type="Label" parent="."]
+offset_left = 1054.0
+offset_top = 612.0
+offset_right = 1171.0
+offset_bottom = 635.0
+text = "ver. alpha 0.0.2"
