@@ -75,8 +75,14 @@ func _notification(what):
       random_tools.free()
 
 
+# return an array of pieces ordered from top-left to bottom-right
 func get_pieces():
   return _pieces
+
+
+# return an array of pieces ordered as the same as the node tree
+func get_piece_tree():
+  return $PieceHolder.get_children()
 
 
 func get_piece_chunks():
@@ -147,7 +153,7 @@ func _get_piece_size():
 
 
 func _reset_pieces():
-  for child in _pieces:
+  for child in $PieceHolder.get_children():
     child.queue_free()
   _pieces.clear()
   if texture == null:
@@ -176,6 +182,7 @@ func _reset_pieces():
       piece.dimple = _create_dimple(i, j, split_dimension.x, split_dimension.y)
       _pieces.append(piece)
       $PieceHolder.add_child(piece)
+      piece.drag_start.connect(_on_piece_clicked)
       piece.piece_connected.connect(_on_piece_connected)
       piece.drag_moved.connect(_on_piece_moved)
 
@@ -235,8 +242,24 @@ func _can_piece_connect_each_other(piece1, piece2):
 
   # Check if the pieces being too close or not
   var too_close_rect = Rect2(Vector2.ZERO, piece1.size * 0.8)
-  print("hohoho ", global_pos_vector, too_close_rect)
   return not too_close_rect.has_point((piece1.position - piece2.position).abs())
+
+
+func _on_piece_clicked(piece):
+  var chunk = _find_chunk_index_by_piece(piece)
+  # var chunk=null
+  var tree = get_piece_tree()
+  if chunk == -1:
+    for i in range(tree.size()):
+      if piece != tree[i]:
+        $PieceHolder.move_child(piece, i)
+      $PieceHolder.move_child(piece, -1)
+  else:
+    for i in range(tree.size()):
+      if tree[i] not in _piece_chunks[chunk]:
+        $PieceHolder.move_child(tree[i], i)
+    for chunk_piece in _piece_chunks[chunk]:
+      $PieceHolder.move_child(chunk_piece, -1)
 
 
 func _on_piece_connected(piece1, piece2):

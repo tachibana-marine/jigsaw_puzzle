@@ -18,7 +18,7 @@ var _movement = Vector2.ZERO
 func _input(event: InputEvent) -> void:
   if event is InputEventMouseButton:
     if event.button_index == MOUSE_BUTTON_LEFT && event.is_released() && _is_dragging:
-      drag_end.emit()
+      drag_end.emit(self)
       _is_dragging = false
   if event is InputEventMouseMotion:
     if _is_dragging:
@@ -28,7 +28,7 @@ func _input(event: InputEvent) -> void:
 func _input_event(viewport: Viewport, event: InputEvent, _shape_idx: int) -> void:
   if event is InputEventMouseButton:
     if event.button_index == MOUSE_BUTTON_LEFT && event.is_pressed():
-      drag_start.emit()
+      drag_start.emit(self)
       viewport.set_input_as_handled()
       _is_dragging = true
 

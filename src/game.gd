@@ -9,4 +9,5 @@ func _process(_delta: float) -> void:
 
 func _ready() -> void:
   # pass
-  $JigsawPuzzle.shuffle(0, 500)
+  get_viewport().physics_object_picking_sort = true
+  # $JigsawPuzzle.shuffle(0, 500)

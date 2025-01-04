@@ -32,7 +32,7 @@ func connect_piece(piece: Piece):
   piece_connected.emit(self, piece)
 
 
-func _on_drag_end():
+func _on_drag_end(_piece):
   for area in get_overlapping_areas():
     var piece := area as Piece
     if not piece:

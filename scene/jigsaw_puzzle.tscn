@@ -19,5 +19,5 @@ position = Vector2(43, 0)
 script = ExtResource("6_wuai8")
 texture = ExtResource("3_ertd7")
 split_dimension = Vector2i(4, 6)
-margin = 1
+margin = 40
 dimple_ratio = 30.0

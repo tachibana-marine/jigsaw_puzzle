@@ -286,3 +286,24 @@ class TestJigsawPuzzle:
     assert_eq(pieces[0].position, Vector2.ZERO)
     assert_eq(pieces[1].position, Vector2(50, 0))
     assert_eq(jigsaw_puzzle.get_piece_chunks(), [[pieces[0], pieces[1]]])
+
+  func test_clicked_piece_and_chunk_move_to_front():
+    var jigsaw_puzzle = add_child_autofree(JigsawPuzzle.new())
+    jigsaw_puzzle.texture = create_empty_image_texture(150, 150)
+    jigsaw_puzzle.split_dimension = Vector2i(3, 3)
+    await wait_frames(1)
+    var pieces = jigsaw_puzzle.get_pieces()
+    var tree = jigsaw_puzzle.get_piece_tree()
+    # connect the first piece and second piece
+    jigsaw_puzzle._on_piece_connected(pieces[0], pieces[1])
+    assert_eq(pieces.size(), tree.size())
+    assert_eq(pieces[0], tree[0])
+    assert_eq(pieces[1], tree[1])
+    # click on the first piece
+    _sender.mouse_left_button_down(Vector2.ZERO).hold_for(.1)
+    await (_sender.idle)
+    pieces = jigsaw_puzzle.get_pieces()
+    tree = jigsaw_puzzle.get_piece_tree()
+    print(tree)
+    assert_eq(pieces[0], tree[-2])
+    assert_eq(pieces[1], tree[-1])
